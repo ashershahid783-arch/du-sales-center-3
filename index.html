@@ -193,9 +193,8 @@
                 <button type="submit" class="btn btn-primary w-full">Sign In</button>
 
                 <div class="text-center text-sm text-gray-600 mt-6">
-                    <p class="font-semibold mb-2">Demo Accounts:</p>
-                    <p>Admin: admin@sales.com / admin123</p>
-                    <p>Employee: john@sales.com / emp123</p>
+                    <p class="font-semibold">Need access?</p>
+                    <p class="text-gray-500">Contact your administrator for login credentials.</p>
                 </div>
             </form>
         </div>
@@ -569,6 +568,34 @@
                                     <button class="btn btn-secondary" onclick="clearImportTextarea()">Clear</button>
                                 </div>
                                 <p class="text-xs text-gray-500 mt-2">Import overwrites current data in this browser.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <div class="flex items-start justify-between gap-4">
+                                <div>
+                                    <h3 class="text-xl font-extrabold text-gray-800">Launch & Deployment</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Make it look professional for your team and customers.</p>
+                                </div>
+                                <button class="btn btn-ghost" onclick="openLaunchGuide()">Open Guide</button>
+                            </div>
+
+                            <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="border rounded-lg p-4">
+                                    <p class="font-semibold text-gray-800">Quick Professional Launch (Static Hosting)</p>
+                                    <p class="text-sm text-gray-600 mt-1">Upload this single <span class="font-semibold">index.html</span> to Netlify / Vercel / GitHub Pages.</p>
+                                    <p class="text-xs text-gray-500 mt-2">Important: Data stays in each user’s browser (localStorage).</p>
+                                </div>
+                                <div class="border rounded-lg p-4">
+                                    <p class="font-semibold text-gray-800">Real Company Setup (Recommended)</p>
+                                    <p class="text-sm text-gray-600 mt-1">Use a backend + database so all employees share the same data with secure login.</p>
+                                    <p class="text-xs text-gray-500 mt-2">We can upgrade this to Firebase / Supabase / custom API when you’re ready.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row gap-2 mt-4">
+                                <button class="btn btn-primary" onclick="openLaunchGuide()">Launch Guide</button>
+                                <button class="btn btn-ghost" onclick="downloadLaunchChecklist()">Download Checklist</button>
                             </div>
                         </div>
                     </div>
@@ -1005,6 +1032,71 @@ settings: {brand1, brand2, departments[], products[]}</pre>
         </div>
     </div>
 
+    <!-- Launch Guide Modal -->
+    <div id="launchGuideModal" class="modal">
+        <div class="modal-content">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <h3 class="text-2xl font-extrabold text-gray-800">Launch Guide (Professional Setup)</h3>
+                    <p class="text-sm text-gray-600 mt-1">Choose the best way to launch depending on whether you need shared company data.</p>
+                </div>
+                <button class="btn btn-ghost" onclick="closeModal('launchGuideModal')">Close</button>
+            </div>
+
+            <div class="mt-6 space-y-6">
+                <div class="border rounded-lg p-4">
+                    <p class="font-extrabold text-gray-800">Option A — Quick launch (Fastest)</p>
+                    <p class="text-sm text-gray-700 mt-2">Host this single <span class="font-semibold">index.html</span> online (Netlify / Vercel / GitHub Pages). This looks professional and works instantly.</p>
+                    <div class="mt-3 text-sm text-gray-700">
+                        <p class="font-semibold">Steps:</p>
+                        <ol class="list-decimal ml-5 mt-1 space-y-1 text-gray-600">
+                            <li>Create an account on <span class="font-semibold">Netlify</span> (recommended for non-coders).</li>
+                            <li>Drag & drop your <span class="font-semibold">index.html</span> file into Netlify.</li>
+                            <li>You get a public link (example: <span class="font-semibold">https://yourapp.netlify.app</span>).</li>
+                            <li>Optional: connect your own domain (example: <span class="font-semibold">saleshub.yourcompany.com</span>).</li>
+                        </ol>
+                    </div>
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded mt-3">
+                        <p class="text-sm text-yellow-900 font-semibold">Important limitation:</p>
+                        <p class="text-sm text-yellow-900/80 mt-1">This demo stores data in each user’s browser (localStorage). That means each computer has its own data. Use this option for testing/training or single-computer usage.</p>
+                    </div>
+                </div>
+
+                <div class="border rounded-lg p-4">
+                    <p class="font-extrabold text-gray-800">Option B — Real company launch (Recommended)</p>
+                    <p class="text-sm text-gray-700 mt-2">If you want all employees to share the same data (attendance, sales, payroll) across computers, you need a backend database + secure authentication.</p>
+                    <div class="mt-3 text-sm text-gray-700">
+                        <p class="font-semibold">Recommended stacks:</p>
+                        <ul class="list-disc ml-5 mt-1 space-y-1 text-gray-600">
+                            <li><span class="font-semibold">Firebase</span> (easy login + database + hosting)</li>
+                            <li><span class="font-semibold">Supabase</span> (Postgres + auth, modern)</li>
+                            <li><span class="font-semibold">Custom API</span> (Node.js / Laravel) + MySQL/Postgres</li>
+                        </ul>
+                    </div>
+                    <div class="bg-blue-50 border-l-4 border-blue-400 p-3 rounded mt-3">
+                        <p class="text-sm text-blue-900 font-semibold">What you gain:</p>
+                        <p class="text-sm text-blue-900/80 mt-1">Shared data, role-based access, employee accounts, admin control, backups, and audit logs.</p>
+                    </div>
+                </div>
+
+                <div class="border rounded-lg p-4">
+                    <p class="font-extrabold text-gray-800">Professional checklist (must do)</p>
+                    <ul class="list-disc ml-5 mt-2 space-y-1 text-sm text-gray-600">
+                        <li>Change demo passwords (Admin + Employees)</li>
+                        <li>Set your Brand Theme (Settings → Brand Theme)</li>
+                        <li>Add Departments & Products (Settings)</li>
+                        <li>Export a backup JSON and store it safely</li>
+                        <li>If using Quick Launch: decide who owns the “main” computer/data</li>
+                    </ul>
+                    <div class="flex flex-col sm:flex-row gap-2 mt-4">
+                        <button class="btn btn-primary" onclick="downloadLaunchChecklist()">Download Checklist</button>
+                        <button class="btn btn-ghost" onclick="closeModal('launchGuideModal')">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Database Schema (LocalStorage-based)
         // employees: [{id, name, email, password, phone, department, salary(fixed), status, role, joinDate}]
@@ -1220,6 +1312,47 @@ settings: {brand1, brand2, departments[], products[]}</pre>
 
         function openQuickHelp() {
             document.getElementById('quickHelpModal').classList.add('active');
+        }
+
+        function openLaunchGuide() {
+            document.getElementById('launchGuideModal').classList.add('active');
+        }
+
+        function downloadLaunchChecklist() {
+            const lines = [
+                'Sales Hub — Launch Checklist',
+                '===========================',
+                '',
+                'Before you share this with your team:',
+                '1) Change demo passwords (Admin + Employees)',
+                '2) Set Brand Theme (Settings → Brand Theme)',
+                '3) Add Departments (Settings → Departments)',
+                '4) Add Products/Services (Settings → Products/Services)',
+                '5) Set Targets (Admin → Targets)',
+                '6) Decide shift timing (late rule) and confirm it matches your office',
+                '7) Export a JSON Backup (Settings → Download Backup)',
+                '',
+                'Hosting options:',
+                '- Quick launch (static hosting): Netlify / Vercel / GitHub Pages',
+                '  NOTE: This demo stores data per browser (localStorage).',
+                '- Real company launch: add backend + database (Firebase / Supabase / Custom API)',
+                '',
+                'Security notes:',
+                '- This demo is for local/testing. For real use, store users & data in a server DB.',
+                '- Enforce strong passwords and HTTPS.',
+                '',
+                'Generated at: ' + new Date().toISOString()
+            ];
+            const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'sales-hub-launch-checklist.txt';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            showToast('Launch checklist downloaded.', 'success');
         }
 
         function sanitizeSalesAndTargetsToCountMode() {
