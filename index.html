@@ -1,0 +1,2650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Call Center - Management System</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --brand1:#667eea;
+            --brand2:#764ba2;
+        }
+        * { font-family: 'Inter', sans-serif; }
+
+        .gradient-bg { background: linear-gradient(135deg, var(--brand1) 0%, var(--brand2) 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+
+        .pulse-animation { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+
+        .slide-in { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .badge { display: inline-flex; align-items: center; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; }
+        .badge-success { background-color: #d1fae5; color: #065f46; }
+        .badge-warning { background-color: #fef3c7; color: #92400e; }
+        .badge-danger { background-color: #fee2e2; color: #991b1b; }
+        .badge-info { background-color: #dbeafe; color: #1e40af; }
+
+        .leaderboard-rank { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.125rem; }
+        .rank-1 { background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #854d0e; }
+        .rank-2 { background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%); color: #1f2937; }
+        .rank-3 { background: linear-gradient(135deg, #cd7f32 0%, #e8a87c 100%); color: #fff; }
+
+        .progress-bar { height: 8px; background-color: #e5e7eb; border-radius: 9999px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--brand1) 0%, var(--brand2) 100%); transition: width 0.5s ease; }
+
+        .nav-item { cursor: pointer; padding: 0.75rem 1.5rem; border-radius: 0.5rem; transition: all 0.2s; white-space: nowrap; }
+        .nav-item:hover { background-color: rgba(255, 255, 255, 0.1); }
+        .nav-item.active { background-color: rgba(255, 255, 255, 0.2); font-weight: 600; }
+
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background-color: #f9fafb; padding: 1rem; text-align: left; font-weight: 600; color: #374151; border-bottom: 2px solid #e5e7eb; }
+        td { padding: 1rem; border-bottom: 1px solid #e5e7eb; }
+        tr:hover { background-color: #f9fafb; }
+
+        input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="date"], input[type="color"], select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        textarea { min-height: 160px; }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--brand1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+        }
+
+        button { cursor: pointer; transition: all 0.2s; }
+        .btn { padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 600; font-size: 0.875rem; border: none; }
+        .btn-primary { background: linear-gradient(135deg, var(--brand1) 0%, var(--brand2) 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.35); }
+        .btn-secondary { background-color: #6b7280; color: white; }
+        .btn-secondary:hover { background-color: #4b5563; }
+        .btn-success { background-color: #10b981; color: white; }
+        .btn-success:hover { background-color: #059669; }
+        .btn-danger { background-color: #ef4444; color: white; }
+        .btn-danger:hover { background-color: #dc2626; }
+        .btn-ghost { background-color: rgba(0,0,0,0.04); }
+        .btn-ghost:hover { background-color: rgba(0,0,0,0.07); }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 720px;
+            width: 92%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .hidden { display: none !important; }
+
+        .clock-display {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--brand1);
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.35rem 0.6rem;
+            border-radius: 9999px;
+            background: rgba(0,0,0,0.04);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .chip button {
+            width: 22px;
+            height: 22px;
+            border-radius: 9999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.06);
+        }
+        .chip button:hover { background: rgba(0,0,0,0.12); }
+
+        .toast-container {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            pointer-events: none;
+        }
+        .toast {
+            pointer-events: auto;
+            min-width: 280px;
+            max-width: 420px;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+            border: 1px solid rgba(0,0,0,0.08);
+            padding: 0.75rem 0.9rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            animation: slideIn 0.2s ease-out;
+        }
+        .toast .dot { width: 10px; height: 10px; border-radius: 9999px; margin-top: 0.25rem; }
+        .toast-success .dot { background: #10b981; }
+        .toast-danger .dot { background: #ef4444; }
+        .toast-info .dot { background: #3b82f6; }
+
+        @media (max-width: 768px) {
+            .clock-display { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center gradient-bg">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 md:p-12 w-full max-w-md slide-in">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-extrabold text-gray-800 mb-2">📞 Sales Hub</h1>
+                <p class="text-gray-600">Call Center Management System</p>
+            </div>
+
+            <form id="loginForm" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                    <input type="email" id="loginEmail" required placeholder="Enter your email" class="w-full">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Enter your password" class="w-full">
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full">Sign In</button>
+
+                <div class="text-center text-sm text-gray-600 mt-6">
+                    <p class="font-semibold mb-2">Demo Accounts:</p>
+                    <p>Admin: admin@sales.com / admin123</p>
+                    <p>Employee: john@sales.com / emp123</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="hidden">
+        <nav class="gradient-bg text-white shadow-lg">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-2xl font-extrabold">📞 Sales Hub <span class="opacity-80 font-semibold">— Admin</span></h1>
+                        <span class="hidden sm:inline-flex text-xs font-semibold bg-white/15 px-3 py-1 rounded-full" id="appEnvBadge">Local Demo (Browser Storage)</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openQuickHelp()" class="btn btn-ghost text-white" style="background: rgba(255,255,255,0.12)">Help</button>
+                        <button onclick="logout()" class="btn btn-secondary">Logout</button>
+                    </div>
+                </div>
+                <div class="flex space-x-2 mt-4 overflow-x-auto">
+                    <div class="nav-item active" onclick="showAdminView('overview', this)">Dashboard</div>
+                    <div class="nav-item" onclick="showAdminView('employees', this)">Employees</div>
+                    <div class="nav-item" onclick="showAdminView('attendance', this)">Attendance</div>
+                    <div class="nav-item" onclick="showAdminView('targets', this)">Targets</div>
+                    <div class="nav-item" onclick="showAdminView('payroll', this)">Payroll</div>
+                    <div class="nav-item" onclick="showAdminView('leaderboard', this)">Leaderboard</div>
+                    <div class="nav-item" onclick="showAdminView('settings', this)">Settings</div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mx-auto px-4 py-8">
+            <!-- Overview View -->
+            <div id="adminOverview" class="admin-view">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
+                    <h2 class="text-3xl font-extrabold text-gray-800">Dashboard Overview</h2>
+                    <div class="flex gap-2">
+                        <button class="btn btn-ghost" onclick="exportData()">Export Backup</button>
+                        <button class="btn btn-primary" onclick="showAdminView('settings', document.querySelector('#adminDashboard .nav-item:last-child'))">Open Settings</button>
+                    </div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm font-semibold">Total Employees</p>
+                                <p class="text-3xl font-extrabold text-gray-800 mt-2" id="totalEmployees">0</p>
+                            </div>
+                            <div class="bg-blue-100 p-4 rounded-full">
+                                <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm font-semibold">Present Today</p>
+                                <p class="text-3xl font-extrabold text-green-600 mt-2" id="presentToday">0</p>
+                            </div>
+                            <div class="bg-green-100 p-4 rounded-full">
+                                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm font-semibold">Total Sales (This Month)</p>
+                                <p class="text-3xl font-extrabold text-purple-600 mt-2" id="totalSales">0 sales</p>
+                            </div>
+                            <div class="bg-purple-100 p-4 rounded-full">
+                                <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm font-semibold">Target Achievement</p>
+                                <p class="text-3xl font-extrabold text-orange-600 mt-2" id="targetAchievement">0%</p>
+                            </div>
+                            <div class="bg-orange-100 p-4 rounded-full">
+                                <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <h3 class="text-xl font-extrabold text-gray-800 mb-4">Recent Activity</h3>
+                    <div id="recentActivity" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <!-- Employees View -->
+            <div id="adminEmployees" class="admin-view hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-extrabold text-gray-800">Employee Management</h2>
+                    <button onclick="openAddEmployeeModal()" class="btn btn-primary">+ Add Employee</button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Department</th>
+                                    <th>Base Salary</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="employeesTableBody"></tbody>
+                        </table>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-3">Admin-only: Base salary is fixed: Rs 20,000. Punctuality bonus: Rs 5,000 if ≤3 late days/month. Sales bonus: 6th+ sale adds Rs 4,200 each (monthly).</p>
+                </div>
+            </div>
+
+            <!-- Attendance View -->
+            <div id="adminAttendance" class="admin-view hidden">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
+                    <h2 class="text-3xl font-extrabold text-gray-800">Attendance Records</h2>
+                    <button onclick="ensureAttendanceBackfillAndReload()" class="btn btn-ghost">Backfill Missed Days</button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Employee</label>
+                            <select id="attendanceFilter" onchange="filterAttendance()" class="w-full">
+                                <option value="">All Employees</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">From Date</label>
+                            <input type="date" id="attendanceFromDate" onchange="filterAttendance()">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">To Date</label>
+                            <input type="date" id="attendanceToDate" onchange="filterAttendance()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Date</th>
+                                    <th>Clock In</th>
+                                    <th>Clock Out</th>
+                                    <th>Hours Worked</th>
+                                    <th>Punctuality</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceTableBody"></tbody>
+                        </table>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-3">Late is auto-detected at clock-in (after shift start + grace). You can adjust the shift time in code later if needed.</p>
+                </div>
+            </div>
+
+            <!-- Targets View -->
+            <div id="adminTargets" class="admin-view hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-gray-800">Sales Targets</h2>
+                        <p class="text-sm text-gray-600 mt-1">Targets are measured as <span class="font-semibold">sales count</span> (1–100), not money.</p>
+                    </div>
+                    <button onclick="openSetTargetModal()" class="btn btn-primary">+ Set Target</button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-xl font-extrabold text-gray-800 mb-4">Team Target</h3>
+                        <div id="teamTargetDisplay"></div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h3 class="text-xl font-extrabold text-gray-800 mb-4">Individual Targets</h3>
+                        <div id="individualTargetsDisplay"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payroll View -->
+            <div id="adminPayroll" class="admin-view hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-3xl font-extrabold text-gray-800">Payroll Management (Admin Only)</h2>
+                    <button onclick="processPayroll()" class="btn btn-success">Process Payroll</button>
+                </div>
+
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 rounded">
+                    <p class="text-sm text-blue-900 font-semibold">Salary rules:</p>
+                    <ul class="text-sm text-blue-900/80 list-disc ml-5 mt-2">
+                        <li>Base salary (fixed): <span class="font-extrabold">Rs 20,000</span></li>
+                        <li>Punctuality bonus: <span class="font-extrabold">Rs 5,000</span> if late days ≤ <span class="font-extrabold">3</span> in the month</li>
+                        <li>Sales bonus (admin payroll): after the first <span class="font-extrabold">5 sales</span> in the month, each additional sale adds <span class="font-extrabold">Rs 4,200</span> (6th+ sale)</li>
+                        <li>Strict rule: Deduct <span class="font-extrabold">50%</span> of base salary if employee is absent for more than <span class="font-extrabold">14 consecutive days</span></li>
+                    </ul>
+                </div>
+
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-yellow-800 font-semibold">
+                                Tip: Use “Backfill Missed Days” in Attendance to generate historical absences.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Base Salary</th>
+                                    <th>Punctuality Bonus</th>
+                                    <th>Sales (This Month)</th>
+                                    <th>Sales Bonus (6th+)</th>
+                                    <th>Late Days (This Month)</th>
+                                    <th>Days Present (This Month)</th>
+                                    <th>Consecutive Absences</th>
+                                    <th>Deductions</th>
+                                    <th>Net Salary</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="payrollTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard View -->
+            <div id="adminLeaderboard" class="admin-view hidden">
+                <h2 class="text-3xl font-extrabold text-gray-800 mb-6">Performance Leaderboard</h2>
+                <p class="text-sm text-gray-600 -mt-4 mb-6">Ranked by total <span class="font-semibold">sales count</span> this month.</p>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="space-y-4" id="leaderboardDisplay"></div>
+                </div>
+            </div>
+
+            <!-- Settings View -->
+            <div id="adminSettings" class="admin-view hidden">
+                <h2 class="text-3xl font-extrabold text-gray-800 mb-6">Settings & Help</h2>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <div class="flex items-start justify-between gap-4">
+                                <div>
+                                    <h3 class="text-xl font-extrabold text-gray-800">No-code editing</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Use the tools below to customize your call center without touching code.</p>
+                                </div>
+                                <button class="btn btn-ghost" onclick="openQuickHelp()">Open Help</button>
+                            </div>
+
+                            <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="border rounded-lg p-4">
+                                    <p class="font-semibold text-gray-800">Add / Edit Employees</p>
+                                    <p class="text-sm text-gray-600 mt-1">Go to <span class="font-semibold">Employees</span> tab → <span class="font-semibold">Add Employee</span> or click the pencil icon to edit.</p>
+                                </div>
+                                <div class="border rounded-lg p-4">
+                                    <p class="font-semibold text-gray-800">Set Targets</p>
+                                    <p class="text-sm text-gray-600 mt-1">Go to <span class="font-semibold">Targets</span> tab → <span class="font-semibold">Set Target</span> (team or individual). Targets are counts (1–100).</p>
+                                </div>
+                                <div class="border rounded-lg p-4">
+                                    <p class="font-semibold text-gray-800">Record Sales</p>
+                                    <p class="text-sm text-gray-600 mt-1">Employees login → <span class="font-semibold">Sales</span> tab → <span class="font-semibold">Add Sale</span>.</p>
+                                </div>
+                                <div class="border rounded-lg p-4">
+                                    <p class="font-semibold text-gray-800">Payroll</p>
+                                    <p class="text-sm text-gray-600 mt-1">Payroll is admin-only. Employees only see their <span class="font-semibold">sales salary</span>.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <h3 class="text-xl font-extrabold text-gray-800 mb-4">Brand Theme</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Primary Color</label>
+                                    <input type="color" id="brandColor1" value="#667eea">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Secondary Color</label>
+                                    <input type="color" id="brandColor2" value="#764ba2">
+                                </div>
+                                <div class="flex items-end">
+                                    <button class="btn btn-primary w-full" onclick="saveBrandTheme()">Save Theme</button>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-3">Theme changes are saved in your browser and apply instantly.</p>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <h3 class="text-xl font-extrabold text-gray-800 mb-4">Departments</h3>
+                            <div class="flex flex-wrap gap-2" id="departmentsChips"></div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
+                                <div class="md:col-span-2">
+                                    <input type="text" id="newDepartment" placeholder="Add a department (e.g., Retention)">
+                                </div>
+                                <button class="btn btn-primary" onclick="addDepartment()">Add</button>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-3">Departments show up in the Add/Edit Employee forms.</p>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <h3 class="text-xl font-extrabold text-gray-800 mb-4">Products / Services</h3>
+                            <div class="flex flex-wrap gap-2" id="productsChips"></div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
+                                <div class="md:col-span-2">
+                                    <input type="text" id="newProduct" placeholder="Add a product/service (e.g., Premium Plan)">
+                                </div>
+                                <button class="btn btn-primary" onclick="addProduct()">Add</button>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-3">This list is suggested when employees record sales.</p>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <h3 class="text-xl font-extrabold text-gray-800 mb-4">Backup / Restore</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="border rounded-lg p-4">
+                                    <p class="font-semibold text-gray-800">Export</p>
+                                    <p class="text-sm text-gray-600 mt-1">Download a JSON backup you can store safely.</p>
+                                    <button class="btn btn-ghost mt-3 w-full" onclick="exportData()">Download Backup</button>
+                                </div>
+                                <div class="border rounded-lg p-4">
+                                    <p class="font-semibold text-gray-800">Import</p>
+                                    <p class="text-sm text-gray-600 mt-1">Paste JSON here or choose a file to restore.</p>
+                                    <input type="file" id="importFile" accept="application/json" class="mt-3" onchange="importFromFile(event)">
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Or paste JSON backup</label>
+                                <textarea id="importJson" placeholder="Paste backup JSON here..."></textarea>
+                                <div class="flex gap-2 mt-3">
+                                    <button class="btn btn-success" onclick="importFromTextarea()">Import JSON</button>
+                                    <button class="btn btn-secondary" onclick="clearImportTextarea()">Clear</button>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">Import overwrites current data in this browser.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <h3 class="text-xl font-extrabold text-gray-800 mb-3">System Rules</h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Base salary (fixed)</span>
+                                    <span class="font-extrabold text-gray-900">Rs 20,000</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Punctuality bonus</span>
+                                    <span class="font-extrabold text-gray-900">Rs 5,000 (≤3 late)</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Consecutive absence threshold</span>
+                                    <span class="font-extrabold text-gray-900">14 days</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Deduction when exceeded</span>
+                                    <span class="font-extrabold text-gray-900">50% of base salary</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Sales salary (employees)</span>
+                                    <span class="font-extrabold text-gray-900">Rs 4,200 per sale</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-600">Sales bonus in admin payroll</span>
+                                    <span class="font-extrabold text-gray-900">6th+ sale: Rs 4,200 each</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-3">Employees only see sales salary. Admin sees base + punctuality + deductions.</p>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <h3 class="text-xl font-extrabold text-gray-800 mb-3">Danger Zone</h3>
+                            <p class="text-sm text-gray-600">If you want a clean start, reset the demo data.</p>
+                            <button class="btn btn-danger w-full mt-4" onclick="resetAllData()">Reset All Data</button>
+                        </div>
+
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <h3 class="text-xl font-extrabold text-gray-800 mb-3">Database Schema (localStorage)</h3>
+                            <pre class="text-xs bg-gray-50 border rounded-lg p-3 overflow-auto">employees: [{id, name, email, password, phone, department, salary(fixed), status, role, joinDate}]
+attendance: [{id, employeeId, date, clockIn, clockOut, status, late, lateMinutes}]
+targets: [{id, type, employeeId, amount(=salesCount), period, current}]
+sales: [{id, employeeId, customer, product, amount(=salesCount), date, status}]
+settings: {brand1, brand2, departments[], products[]}</pre>
+                            <p class="text-xs text-gray-500 mt-2">Note: Targets and Sales use <span class="font-semibold">sales count (1–100)</span>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Employee Dashboard -->
+    <div id="employeeDashboard" class="hidden">
+        <nav class="gradient-bg text-white shadow-lg">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex justify-between items-center">
+                    <h1 class="text-2xl font-extrabold">📞 Sales Hub <span class="opacity-80 font-semibold">— Employee</span></h1>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openQuickHelp()" class="btn btn-ghost text-white" style="background: rgba(255,255,255,0.12)">Help</button>
+                        <button onclick="logout()" class="btn btn-secondary">Logout</button>
+                    </div>
+                </div>
+                <div class="flex space-x-2 mt-4 overflow-x-auto">
+                    <div class="nav-item active" onclick="showEmployeeView('dashboard', this)">Dashboard</div>
+                    <div class="nav-item" onclick="showEmployeeView('attendance', this)">My Attendance</div>
+                    <div class="nav-item" onclick="showEmployeeView('targets', this)">My Targets</div>
+                    <div class="nav-item" onclick="showEmployeeView('sales', this)">Sales</div>
+                    <div class="nav-item" onclick="showEmployeeView('leaderboard', this)">Leaderboard</div>
+                    <div class="nav-item" onclick="showEmployeeView('help', this)">Help</div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mx-auto px-4 py-8">
+            <!-- Employee Dashboard View -->
+            <div id="employeeDashboardView" class="employee-view">
+                <h2 class="text-3xl font-extrabold text-gray-800 mb-6">Welcome, <span id="employeeName"></span>!</h2>
+
+                <!-- Clock In/Out Section -->
+                <div class="bg-white rounded-xl shadow-md p-8 mb-8 text-center">
+                    <div class="clock-display" id="currentTime"></div>
+                    <p class="text-gray-600 mb-6" id="currentDate"></p>
+
+                    <div class="flex flex-col sm:flex-row justify-center gap-3">
+                        <button id="clockInBtn" onclick="clockIn()" class="btn btn-success">
+                            <svg class="inline w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Clock In
+                        </button>
+                        <button id="clockOutBtn" onclick="clockOut()" class="btn btn-danger" disabled>
+                            <svg class="inline w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Clock Out
+                        </button>
+                    </div>
+
+                    <div id="attendanceStatus" class="mt-4"></div>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <p class="text-gray-500 text-sm font-semibold">My Sales Salary (This Month)</p>
+                        <p class="text-3xl font-extrabold text-purple-600 mt-2" id="empMonthlySales">Rs 0</p>
+                        <p class="text-xs text-gray-500 mt-2">Rate: Rs 4,200 per sale</p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <p class="text-gray-500 text-sm font-semibold">Target Achievement</p>
+                        <p class="text-3xl font-extrabold text-green-600 mt-2" id="empTargetAchievement">0%</p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+                        <p class="text-gray-500 text-sm font-semibold">My Rank</p>
+                        <p class="text-3xl font-extrabold text-orange-600 mt-2" id="empRank">#-</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employee Attendance View -->
+            <div id="employeeAttendanceView" class="employee-view hidden">
+                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
+                    <h2 class="text-3xl font-extrabold text-gray-800">My Attendance History</h2>
+                    <p class="text-sm text-gray-600">Shows the most recent 30 days.</p>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Clock In</th>
+                                    <th>Clock Out</th>
+                                    <th>Hours Worked</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="empAttendanceTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employee Targets View -->
+            <div id="employeeTargetsView" class="employee-view hidden">
+                <h2 class="text-3xl font-extrabold text-gray-800 mb-6">My Sales Targets</h2>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div id="empTargetDisplay"></div>
+                </div>
+            </div>
+
+            <!-- Employee Sales View -->
+            <div id="employeeSalesView" class="employee-view hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-gray-800">Record Sales</h2>
+                        <p class="text-sm text-gray-600 mt-1">Record your sales as a <span class="font-semibold">count</span> (1–100).</p>
+                    </div>
+                    <button onclick="openAddSaleModal()" class="btn btn-primary">+ Add Sale</button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>Product</th>
+                                    <th>Sales Count</th>
+                                    <th>Sales Salary</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="empSalesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employee Leaderboard View -->
+            <div id="employeeLeaderboardView" class="employee-view hidden">
+                <h2 class="text-3xl font-extrabold text-gray-800 mb-6">Team Leaderboard</h2>
+
+                <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="space-y-4" id="empLeaderboardDisplay"></div>
+                </div>
+            </div>
+
+            <!-- Employee Help View -->
+            <div id="employeeHelpView" class="employee-view hidden">
+                <h2 class="text-3xl font-extrabold text-gray-800 mb-6">Help</h2>
+                <div class="bg-white rounded-xl shadow-md p-6 space-y-4">
+                    <div>
+                        <p class="font-semibold text-gray-800">Clock in / Clock out</p>
+                        <p class="text-sm text-gray-600 mt-1">Go to <span class="font-semibold">Dashboard</span> and use the buttons. Your time is saved automatically.</p>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-800">Record a sale</p>
+                        <p class="text-sm text-gray-600 mt-1">Go to <span class="font-semibold">Sales</span> → <span class="font-semibold">Add Sale</span>. Use sales count (1–100). Your rank updates instantly.</p>
+                    </div>
+                    <div>
+                        <p class="font-semibold text-gray-800">My targets</p>
+                        <p class="text-sm text-gray-600 mt-1">Use the menu tabs. Targets show your goal and progress.</p>
+                    </div>
+                    <div class="border-t pt-4">
+                        <button class="btn btn-ghost" onclick="openQuickHelp()">Open Quick Help</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Add Employee Modal -->
+    <div id="addEmployeeModal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-2xl font-extrabold text-gray-800 mb-2">Add New Employee</h3>
+            <p class="text-sm text-gray-600 mb-6">Employees can login immediately after you create them.</p>
+            <form id="addEmployeeForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                    <input type="text" id="empName" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                    <input type="email" id="empEmail" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                    <input type="password" id="empPassword" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Phone</label>
+                    <input type="text" id="empPhone" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Department</label>
+                    <select id="empDepartment" required></select>
+                    <p class="text-xs text-gray-500 mt-2">Edit departments in Settings.</p>
+                </div>
+
+                <div class="bg-gray-50 border rounded-lg p-4">
+                    <p class="text-sm font-semibold text-gray-800">Salary Rules (Admin Only)</p>
+                    <p class="text-sm text-gray-600 mt-1">Base salary is fixed: <span class="font-semibold">Rs 20,000</span>. Punctuality bonus: <span class="font-semibold">Rs 5,000</span> if ≤3 late days/month. Sales bonus: after first <span class="font-semibold">5 sales</span>, each additional sale adds <span class="font-semibold">Rs 4,200</span>.</p>
+                </div>
+
+                <div class="flex space-x-4 mt-6">
+                    <button type="submit" class="btn btn-primary flex-1">Add Employee</button>
+                    <button type="button" onclick="closeModal('addEmployeeModal')" class="btn btn-secondary flex-1">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Employee Modal -->
+    <div id="editEmployeeModal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-2xl font-extrabold text-gray-800 mb-2">Edit Employee</h3>
+            <p class="text-sm text-gray-600 mb-6">Update employee details (including password). Changes save immediately.</p>
+
+            <form id="editEmployeeForm" class="space-y-4">
+                <input type="hidden" id="editEmpId">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                        <input type="text" id="editEmpName" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Status</label>
+                        <select id="editEmpStatus" required>
+                            <option value="active">active</option>
+                            <option value="inactive">inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
+                    <input type="email" id="editEmpEmail" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                    <input type="password" id="editEmpPassword" placeholder="Leave blank to keep existing">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Phone</label>
+                        <input type="text" id="editEmpPhone" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Department</label>
+                        <select id="editEmpDepartment" required></select>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 border rounded-lg p-4">
+                    <p class="text-sm font-semibold text-gray-800">Salary Rules (Admin Only)</p>
+                    <p class="text-sm text-gray-600 mt-1">Base salary is fixed: <span class="font-semibold">Rs 20,000</span>. Punctuality bonus: <span class="font-semibold">Rs 5,000</span> if ≤3 late days/month. Sales bonus: after first <span class="font-semibold">5 sales</span>, each additional sale adds <span class="font-semibold">Rs 4,200</span>.</p>
+                </div>
+
+                <div class="flex space-x-4 mt-6">
+                    <button type="submit" class="btn btn-primary flex-1">Save Changes</button>
+                    <button type="button" onclick="closeModal('editEmployeeModal')" class="btn btn-secondary flex-1">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Set Target Modal -->
+    <div id="setTargetModal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-2xl font-extrabold text-gray-800 mb-2">Set Sales Target</h3>
+            <p class="text-sm text-gray-600 mb-6">Targets are measured as <span class="font-semibold">sales count</span> (1–100).</p>
+            <form id="setTargetForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Target Type</label>
+                    <select id="targetType" onchange="toggleEmployeeSelect()" required>
+                        <option value="">Select Type</option>
+                        <option value="team">Team Target</option>
+                        <option value="individual">Individual Target</option>
+                    </select>
+                </div>
+                <div id="employeeSelectDiv" class="hidden">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Employee</label>
+                    <select id="targetEmployee"></select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Target (Sales Count)</label>
+                    <input type="number" id="targetAmount" required min="1" max="100" step="1" placeholder="Example: 30">
+                    <p class="text-xs text-gray-500 mt-2">Min 1, Max 100.</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Period</label>
+                    <select id="targetPeriod" required>
+                        <option value="">Select Period</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                </div>
+                <div class="flex space-x-4 mt-6">
+                    <button type="submit" class="btn btn-primary flex-1">Set Target</button>
+                    <button type="button" onclick="closeModal('setTargetModal')" class="btn btn-secondary flex-1">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Sale Modal -->
+    <div id="addSaleModal" class="modal">
+        <div class="modal-content">
+            <h3 class="text-2xl font-extrabold text-gray-800 mb-2">Record New Sale</h3>
+            <p class="text-sm text-gray-600 mb-6">Tip: You can start typing a product name and select from suggestions.</p>
+            <form id="addSaleForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Customer Name</label>
+                    <input type="text" id="saleCustomer" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Product/Service</label>
+                    <input type="text" id="saleProduct" list="productList" required>
+                    <datalist id="productList"></datalist>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Sales Count (1–100)</label>
+                    <input type="number" id="saleAmount" required min="1" max="100" step="1" placeholder="Example: 1">
+                    <p class="text-xs text-gray-500 mt-2">Enter how many sales you completed (1 to 100).</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Date</label>
+                    <input type="date" id="saleDate" required>
+                </div>
+                <div class="flex space-x-4 mt-6">
+                    <button type="submit" class="btn btn-primary flex-1">Record Sale</button>
+                    <button type="button" onclick="closeModal('addSaleModal')" class="btn btn-secondary flex-1">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quick Help Modal -->
+    <div id="quickHelpModal" class="modal">
+        <div class="modal-content">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <h3 class="text-2xl font-extrabold text-gray-800">Quick Help (No Coding Needed)</h3>
+                    <p class="text-sm text-gray-600 mt-1">Use these steps to add and edit things.</p>
+                </div>
+                <button class="btn btn-ghost" onclick="closeModal('quickHelpModal')">Close</button>
+            </div>
+
+            <div class="mt-6 space-y-4">
+                <div class="border rounded-lg p-4">
+                    <p class="font-semibold text-gray-800">1) Add employees</p>
+                    <p class="text-sm text-gray-600 mt-1">Login as <span class="font-semibold">Admin</span> → <span class="font-semibold">Employees</span> → <span class="font-semibold">Add Employee</span>.</p>
+                </div>
+                <div class="border rounded-lg p-4">
+                    <p class="font-semibold text-gray-800">2) Edit employee details</p>
+                    <p class="text-sm text-gray-600 mt-1">Admin → <span class="font-semibold">Employees</span> → click the <span class="font-semibold">pencil</span> icon.</p>
+                </div>
+                <div class="border rounded-lg p-4">
+                    <p class="font-semibold text-gray-800">3) Set targets</p>
+                    <p class="text-sm text-gray-600 mt-1">Admin → <span class="font-semibold">Targets</span> → <span class="font-semibold">Set Target</span>. Targets use sales count (1–100).</p>
+                </div>
+                <div class="border rounded-lg p-4">
+                    <p class="font-semibold text-gray-800">4) Record sales (employees)</p>
+                    <p class="text-sm text-gray-600 mt-1">Employee login → <span class="font-semibold">Sales</span> → <span class="font-semibold">Add Sale</span> → enter count (1–100).</p>
+                </div>
+                <div class="border rounded-lg p-4">
+                    <p class="font-semibold text-gray-800">5) Payroll (admin only)</p>
+                    <p class="text-sm text-gray-600 mt-1">Only Admin can see base salary + punctuality + deductions. Employees only see their sales salary.</p>
+                </div>
+
+                <div class="bg-gray-50 border rounded-lg p-4">
+                    <p class="font-semibold text-gray-800">Backup your data</p>
+                    <p class="text-sm text-gray-600 mt-1">Admin → <span class="font-semibold">Settings</span> → <span class="font-semibold">Download Backup</span>.</p>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <button class="btn btn-primary w-full" onclick="closeModal('quickHelpModal')">Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Database Schema (LocalStorage-based)
+        // employees: [{id, name, email, password, phone, department, salary(fixed), status, role, joinDate}]
+        // attendance: [{id, employeeId, date, clockIn, clockOut, status, late, lateMinutes}]
+        // targets: [{id, type, employeeId, amount(=salesCount), period, current}]
+        // sales: [{id, employeeId, customer, product, amount(=salesCount), date, status}]
+        // settings: {brand1, brand2, departments[], products[]}
+
+        let currentUser = null;
+        let currentView = 'overview';
+
+        // Strict rule (requested earlier)
+        const STRICT_ABSENCE_THRESHOLD_DAYS = 14;
+        const STRICT_DEDUCTION_PERCENT = 50;
+
+        // Sales count mode
+        const SALES_COUNT_MIN = 1;
+        const SALES_COUNT_MAX = 100;
+
+        // Compensation rules (Pakistan)
+        const BASE_SALARY_PKR = 20000;
+        const PUNCTUALITY_BONUS_PKR = 5000;
+        const MAX_LATE_FOR_PUNCTUALITY = 3;
+        const SALE_PAYOUT_PKR = 4200; // employees see only this
+
+        // Late detection (simple default)
+        const SHIFT_START_MINUTES = 10 * 60; // 10:00 AM
+        const LATE_GRACE_MINUTES = 10; // late after 10:10 AM
+
+        const DEFAULT_SETTINGS = {
+            brand1: '#667eea',
+            brand2: '#764ba2',
+            departments: ['Sales', 'Support', 'Marketing'],
+            products: ['Product A', 'Product B', 'Product C', 'Product D']
+        };
+
+        function showToast(message, type='info', timeout=3200) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <div class="dot"></div>
+                <div class="flex-1">
+                    <p class="text-sm font-semibold text-gray-800">${escapeHtml(message)}</p>
+                </div>
+                <button class="text-gray-500 hover:text-gray-800" aria-label="Dismiss">✕</button>
+            `;
+            const btn = toast.querySelector('button');
+            btn.addEventListener('click', () => toast.remove());
+            container.appendChild(toast);
+            setTimeout(() => { if (toast && toast.isConnected) toast.remove(); }, timeout);
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replaceAll('&', '&amp;')
+                .replaceAll('<', '&lt;')
+                .replaceAll('>', '&gt;')
+                .replaceAll('"', '&quot;')
+                .replaceAll("'", '&#039;');
+        }
+
+        function formatPKR(n) {
+            const num = Number(n || 0);
+            // Keep it simple & familiar: "Rs 20,000"
+            return 'Rs ' + num.toLocaleString('en-PK');
+        }
+
+        function clampSalesCount(n) {
+            const x = Math.round(Number(n || 0));
+            if (!isFinite(x)) return SALES_COUNT_MIN;
+            return Math.max(SALES_COUNT_MIN, Math.min(SALES_COUNT_MAX, x));
+        }
+
+        function pluralize(word, n) {
+            return Number(n) === 1 ? word : word + 's';
+        }
+
+        function getSettings() {
+            try {
+                const raw = localStorage.getItem('settings');
+                const parsed = raw ? JSON.parse(raw) : null;
+                const merged = {
+                    ...DEFAULT_SETTINGS,
+                    ...(parsed || {})
+                };
+                merged.departments = Array.isArray(merged.departments) ? merged.departments : DEFAULT_SETTINGS.departments.slice();
+                merged.products = Array.isArray(merged.products) ? merged.products : DEFAULT_SETTINGS.products.slice();
+                return merged;
+            } catch {
+                return {...DEFAULT_SETTINGS};
+            }
+        }
+
+        function setSettings(next) {
+            localStorage.setItem('settings', JSON.stringify(next));
+            applyBrandTheme();
+            renderSettingsUI();
+            refreshDepartmentSelects();
+            refreshProductDatalist();
+        }
+
+        function applyBrandTheme() {
+            const s = getSettings();
+            document.documentElement.style.setProperty('--brand1', s.brand1 || DEFAULT_SETTINGS.brand1);
+            document.documentElement.style.setProperty('--brand2', s.brand2 || DEFAULT_SETTINGS.brand2);
+            const c1 = document.getElementById('brandColor1');
+            const c2 = document.getElementById('brandColor2');
+            if (c1) c1.value = s.brand1 || DEFAULT_SETTINGS.brand1;
+            if (c2) c2.value = s.brand2 || DEFAULT_SETTINGS.brand2;
+        }
+
+        function saveBrandTheme() {
+            const s = getSettings();
+            const c1 = document.getElementById('brandColor1').value;
+            const c2 = document.getElementById('brandColor2').value;
+            setSettings({ ...s, brand1: c1, brand2: c2 });
+            showToast('Theme saved!', 'success');
+        }
+
+        function renderSettingsUI() {
+            const s = getSettings();
+
+            const deptWrap = document.getElementById('departmentsChips');
+            if (deptWrap) {
+                deptWrap.innerHTML = s.departments.map(d => `
+                    <span class="chip">${escapeHtml(d)}
+                        <button type="button" onclick="removeDepartment('${escapeHtml(d).replaceAll("'","\\'")}')" aria-label="Remove">✕</button>
+                    </span>
+                `).join('') || '<p class="text-sm text-gray-500">No departments yet.</p>';
+            }
+
+            const prodWrap = document.getElementById('productsChips');
+            if (prodWrap) {
+                prodWrap.innerHTML = s.products.map(p => `
+                    <span class="chip">${escapeHtml(p)}
+                        <button type="button" onclick="removeProduct('${escapeHtml(p).replaceAll("'","\\'")}')" aria-label="Remove">✕</button>
+                    </span>
+                `).join('') || '<p class="text-sm text-gray-500">No products yet.</p>';
+            }
+
+            const c1 = document.getElementById('brandColor1');
+            const c2 = document.getElementById('brandColor2');
+            if (c1) c1.value = s.brand1;
+            if (c2) c2.value = s.brand2;
+        }
+
+        function addDepartment() {
+            const input = document.getElementById('newDepartment');
+            const val = (input.value || '').trim();
+            if (!val) return;
+            const s = getSettings();
+            if (s.departments.some(d => d.toLowerCase() === val.toLowerCase())) {
+                showToast('Department already exists.', 'info');
+                return;
+            }
+            s.departments.push(val);
+            setSettings(s);
+            input.value = '';
+            showToast('Department added.', 'success');
+        }
+
+        function removeDepartment(name) {
+            const s = getSettings();
+            const next = s.departments.filter(d => d !== name);
+            setSettings({ ...s, departments: next });
+            showToast('Department removed.', 'success');
+        }
+
+        function addProduct() {
+            const input = document.getElementById('newProduct');
+            const val = (input.value || '').trim();
+            if (!val) return;
+            const s = getSettings();
+            if (s.products.some(p => p.toLowerCase() === val.toLowerCase())) {
+                showToast('Product already exists.', 'info');
+                return;
+            }
+            s.products.push(val);
+            setSettings(s);
+            input.value = '';
+            showToast('Product added.', 'success');
+        }
+
+        function removeProduct(name) {
+            const s = getSettings();
+            const next = s.products.filter(p => p !== name);
+            setSettings({ ...s, products: next });
+            showToast('Product removed.', 'success');
+        }
+
+        function refreshDepartmentSelects() {
+            const s = getSettings();
+            const selects = [
+                document.getElementById('empDepartment'),
+                document.getElementById('editEmpDepartment')
+            ].filter(Boolean);
+
+            selects.forEach(sel => {
+                const current = sel.value;
+                sel.innerHTML = '<option value="">Select Department</option>' + s.departments.map(d => `<option value="${escapeHtml(d)}">${escapeHtml(d)}</option>`).join('');
+                if (current && s.departments.includes(current)) sel.value = current;
+            });
+        }
+
+        function refreshProductDatalist() {
+            const s = getSettings();
+            const list = document.getElementById('productList');
+            if (!list) return;
+            list.innerHTML = s.products.map(p => `<option value="${escapeHtml(p)}"></option>`).join('');
+        }
+
+        function openQuickHelp() {
+            document.getElementById('quickHelpModal').classList.add('active');
+        }
+
+        function sanitizeSalesAndTargetsToCountMode() {
+            try {
+                const targets = JSON.parse(localStorage.getItem('targets') || '[]');
+                const sales = JSON.parse(localStorage.getItem('sales') || '[]');
+
+                let changed = false;
+
+                for (const t of targets) {
+                    if (typeof t.amount !== 'undefined') {
+                        const next = clampSalesCount(t.amount);
+                        if (next !== t.amount) { t.amount = next; changed = true; }
+                    }
+                }
+
+                for (const s of sales) {
+                    if (typeof s.amount !== 'undefined') {
+                        const next = clampSalesCount(s.amount);
+                        if (next !== s.amount) { s.amount = next; changed = true; }
+                    }
+                }
+
+                if (changed) {
+                    localStorage.setItem('targets', JSON.stringify(targets));
+                    localStorage.setItem('sales', JSON.stringify(sales));
+                }
+            } catch {
+                // ignore
+            }
+        }
+
+        function normalizeEmployeeCompensation() {
+            try {
+                const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+                let changed = false;
+                for (const e of employees) {
+                    if (e.role === 'employee') {
+                        if (e.salary !== BASE_SALARY_PKR) { e.salary = BASE_SALARY_PKR; changed = true; }
+                    } else if (e.role === 'admin') {
+                        if (typeof e.salary !== 'number' || e.salary !== 0) { e.salary = 0; changed = true; }
+                    }
+                }
+                if (changed) localStorage.setItem('employees', JSON.stringify(employees));
+            } catch {
+                // ignore
+            }
+        }
+
+        // Initialize App
+        function initApp() {
+            if (!localStorage.getItem('settings')) {
+                localStorage.setItem('settings', JSON.stringify(DEFAULT_SETTINGS));
+            }
+
+            applyBrandTheme();
+
+            // Initialize demo data if not exists
+            if (!localStorage.getItem('employees')) {
+                const demoEmployees = [
+                    {
+                        id: 1,
+                        name: 'Admin User',
+                        email: 'admin@sales.com',
+                        password: 'admin123',
+                        phone: '555-0001',
+                        department: 'Management',
+                        salary: 0,
+                        status: 'active',
+                        role: 'admin',
+                        joinDate: '2024-01-01'
+                    },
+                    {
+                        id: 2,
+                        name: 'John Doe',
+                        email: 'john@sales.com',
+                        password: 'emp123',
+                        phone: '555-0002',
+                        department: 'Sales',
+                        salary: BASE_SALARY_PKR,
+                        status: 'active',
+                        role: 'employee',
+                        joinDate: '2024-01-15'
+                    },
+                    {
+                        id: 3,
+                        name: 'Sarah Smith',
+                        email: 'sarah@sales.com',
+                        password: 'emp123',
+                        phone: '555-0003',
+                        department: 'Sales',
+                        salary: BASE_SALARY_PKR,
+                        status: 'active',
+                        role: 'employee',
+                        joinDate: '2024-02-01'
+                    },
+                    {
+                        id: 4,
+                        name: 'Mike Johnson',
+                        email: 'mike@sales.com',
+                        password: 'emp123',
+                        phone: '555-0004',
+                        department: 'Sales',
+                        salary: BASE_SALARY_PKR,
+                        status: 'active',
+                        role: 'employee',
+                        joinDate: '2024-02-15'
+                    }
+                ];
+                localStorage.setItem('employees', JSON.stringify(demoEmployees));
+            }
+
+            normalizeEmployeeCompensation();
+
+            if (!localStorage.getItem('attendance')) {
+                localStorage.setItem('attendance', JSON.stringify([]));
+            }
+
+            if (!localStorage.getItem('targets')) {
+                const demoTargets = [
+                    {id: 1, type: 'team', employeeId: null, amount: 80, period: 'monthly', current: 0},
+                    {id: 2, type: 'individual', employeeId: 2, amount: 30, period: 'monthly', current: 0},
+                    {id: 3, type: 'individual', employeeId: 3, amount: 35, period: 'monthly', current: 0},
+                    {id: 4, type: 'individual', employeeId: 4, amount: 25, period: 'monthly', current: 0}
+                ];
+                localStorage.setItem('targets', JSON.stringify(demoTargets));
+            }
+
+            if (!localStorage.getItem('sales')) {
+                const demoSales = [
+                    {id: 1, employeeId: 2, customer: 'ABC Corp', product: 'Product A', amount: 3, date: '2024-12-01', status: 'completed'},
+                    {id: 2, employeeId: 3, customer: 'XYZ Inc', product: 'Product B', amount: 5, date: '2024-12-02', status: 'completed'},
+                    {id: 3, employeeId: 2, customer: 'Tech Solutions', product: 'Product C', amount: 2, date: '2024-12-03', status: 'completed'},
+                    {id: 4, employeeId: 4, customer: 'Global Industries', product: 'Product A', amount: 4, date: '2024-12-04', status: 'completed'},
+                    {id: 5, employeeId: 3, customer: 'Smart Systems', product: 'Product D', amount: 6, date: '2024-12-05', status: 'completed'}
+                ];
+                localStorage.setItem('sales', JSON.stringify(demoSales));
+            }
+
+            sanitizeSalesAndTargetsToCountMode();
+
+            refreshDepartmentSelects();
+            refreshProductDatalist();
+            renderSettingsUI();
+
+            updateClock();
+            setInterval(updateClock, 1000);
+
+            const today = new Date().toISOString().split('T')[0];
+            const saleDate = document.getElementById('saleDate');
+            if (saleDate) saleDate.value = today;
+
+            if (!localStorage.getItem('seenHelp')) {
+                localStorage.setItem('seenHelp', '1');
+                setTimeout(() => showToast('Tip: Click “Help” to learn how to add and edit things.', 'info', 5000), 800);
+            }
+        }
+
+        // Update Clock
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
+            const dateString = now.toLocaleDateString('en-US', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
+
+            const clockDisplay = document.getElementById('currentTime');
+            const dateDisplay = document.getElementById('currentDate');
+
+            if (clockDisplay) clockDisplay.textContent = timeString;
+            if (dateDisplay) dateDisplay.textContent = dateString;
+        }
+
+        // Utilities: dates
+        function toISODate(d) {
+            return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().split('T')[0];
+        }
+        function addDays(date, days) {
+            const d = new Date(date);
+            d.setDate(d.getDate() + days);
+            return d;
+        }
+
+        // Attendance backfill: create absent records for missing days (last 60 days only)
+        function ensureAttendanceBackfill(daysBack = 60) {
+            const employees = JSON.parse(localStorage.getItem('employees') || '[]').filter(e => e.role !== 'admin');
+            const attendance = JSON.parse(localStorage.getItem('attendance') || '[]');
+            const existingKey = new Set(attendance.map(a => `${a.employeeId}|${a.date}`));
+
+            const today = new Date();
+            const start = addDays(today, -daysBack);
+
+            let nextId = attendance.length ? Math.max(...attendance.map(a => a.id || 0)) + 1 : 1;
+            let added = 0;
+
+            for (const emp of employees) {
+                const join = emp.joinDate ? new Date(emp.joinDate) : start;
+                const empStart = join > start ? join : start;
+
+                // only backfill up to yesterday (not today)
+                for (let d = new Date(empStart); d < today; d = addDays(d, 1)) {
+                    const iso = toISODate(d);
+                    const key = `${emp.id}|${iso}`;
+                    if (existingKey.has(key)) continue;
+                    attendance.push({
+                        id: nextId++,
+                        employeeId: emp.id,
+                        date: iso,
+                        clockIn: null,
+                        clockOut: null,
+                        status: 'absent',
+                        late: false,
+                        lateMinutes: null
+                    });
+                    existingKey.add(key);
+                    added++;
+                }
+            }
+
+            if (added > 0) {
+                localStorage.setItem('attendance', JSON.stringify(attendance));
+            }
+
+            return added;
+        }
+
+        function ensureAttendanceBackfillAndReload() {
+            const added = ensureAttendanceBackfill(60);
+            loadAttendanceTable();
+            loadPayrollTable();
+            loadAdminOverview();
+            showToast(added > 0 ? `Backfill complete: ${added} absent day(s) added.` : 'Backfill complete: nothing to add.', 'success');
+        }
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            const employees = JSON.parse(localStorage.getItem('employees'));
+            const user = employees.find(emp => emp.email === email && emp.password === password);
+
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginScreen').classList.add('hidden');
+
+                normalizeEmployeeCompensation();
+                ensureAttendanceBackfill(60);
+
+                if (user.role === 'admin') {
+                    document.getElementById('adminDashboard').classList.remove('hidden');
+                    loadAdminDashboard();
+                    showToast(`Welcome back, ${user.name}!`, 'success');
+                } else {
+                    document.getElementById('employeeDashboard').classList.remove('hidden');
+                    loadEmployeeDashboard();
+                    showToast(`Welcome, ${user.name}!`, 'success');
+                }
+            } else {
+                showToast('Invalid credentials. Please try again.', 'danger');
+            }
+        });
+
+        // Logout
+        function logout() {
+            currentUser = null;
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('employeeDashboard').classList.add('hidden');
+            document.getElementById('loginForm').reset();
+            showToast('Logged out.', 'info');
+        }
+
+        // Admin Dashboard Functions
+        function loadAdminDashboard() {
+            showAdminView('overview', document.querySelector('#adminDashboard .nav-item'));
+            loadAdminOverview();
+            loadEmployeesTable();
+            loadAttendanceTable();
+            loadTargetsDisplay();
+            loadPayrollTable();
+            loadLeaderboard();
+            renderSettingsUI();
+        }
+
+        function showAdminView(view, el) {
+            document.querySelectorAll('.admin-view').forEach(v => v.classList.add('hidden'));
+            document.getElementById('admin' + view.charAt(0).toUpperCase() + view.slice(1)).classList.remove('hidden');
+
+            document.querySelectorAll('#adminDashboard .nav-item').forEach(item => item.classList.remove('active'));
+            if (el) el.classList.add('active');
+
+            currentView = view;
+
+            if (view === 'settings') {
+                applyBrandTheme();
+                renderSettingsUI();
+            }
+        }
+
+        function loadAdminOverview() {
+            sanitizeSalesAndTargetsToCountMode();
+
+            const employees = JSON.parse(localStorage.getItem('employees')).filter(emp => emp.role !== 'admin');
+            const attendance = JSON.parse(localStorage.getItem('attendance'));
+            const sales = JSON.parse(localStorage.getItem('sales'));
+            const targets = JSON.parse(localStorage.getItem('targets'));
+
+            document.getElementById('totalEmployees').textContent = employees.length;
+
+            const today = new Date().toISOString().split('T')[0];
+            const presentToday = attendance.filter(att => att.date === today && att.status === 'present').length;
+            document.getElementById('presentToday').textContent = presentToday;
+
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            const monthlySales = sales.filter(sale => {
+                const saleDate = new Date(sale.date);
+                return saleDate.getMonth() === currentMonth && saleDate.getFullYear() === currentYear;
+            });
+            const totalSalesCount = monthlySales.reduce((sum, sale) => sum + clampSalesCount(sale.amount), 0);
+            document.getElementById('totalSales').textContent = totalSalesCount.toLocaleString('en-PK') + ' sales';
+
+            const teamTarget = targets.find(t => t.type === 'team');
+            const achievement = teamTarget ? Math.round((totalSalesCount / teamTarget.amount) * 100) : 0;
+            document.getElementById('targetAchievement').textContent = (isFinite(achievement) ? achievement : 0) + '%';
+
+            loadRecentActivity();
+        }
+
+        function loadRecentActivity() {
+            const attendance = JSON.parse(localStorage.getItem('attendance'));
+            const sales = JSON.parse(localStorage.getItem('sales'));
+            const employees = JSON.parse(localStorage.getItem('employees'));
+
+            const activities = [];
+
+            const recentAttendance = attendance.slice(-8).reverse();
+            recentAttendance.forEach(att => {
+                const emp = employees.find(e => e.id === att.employeeId);
+                let text = '';
+                let dot = 'green';
+
+                if (att.status === 'absent') {
+                    text = `${emp?.name} was marked absent`;
+                    dot = 'red';
+                } else {
+                    text = `${emp?.name} clocked ${att.clockOut ? 'out' : 'in'}`;
+                    dot = 'green';
+                }
+
+                activities.push({
+                    type: dot,
+                    text,
+                    time: att.clockOut || att.clockIn || '',
+                    date: att.date
+                });
+            });
+
+            const recentSales = sales.slice(-8).reverse();
+            recentSales.forEach(sale => {
+                const emp = employees.find(e => e.id === sale.employeeId);
+                const cnt = clampSalesCount(sale.amount);
+                activities.push({
+                    type: 'purple',
+                    text: `${emp?.name} recorded ${cnt} ${pluralize('sale', cnt)}`,
+                    time: '',
+                    date: sale.date
+                });
+            });
+
+            activities.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            const activityHTML = activities.slice(0, 10).map(activity => `
+                <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                    <div class="flex-shrink-0">
+                        ${activity.type === 'green'
+                            ? '<div class="w-2 h-2 bg-green-500 rounded-full"></div>'
+                            : activity.type === 'red'
+                                ? '<div class="w-2 h-2 bg-red-500 rounded-full"></div>'
+                                : '<div class="w-2 h-2 bg-purple-500 rounded-full"></div>'}
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm text-gray-800">${escapeHtml(activity.text)}</p>
+                        <p class="text-xs text-gray-500">${activity.date} ${escapeHtml(activity.time)}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('recentActivity').innerHTML = activityHTML || '<p class="text-gray-500 text-center">No recent activity</p>';
+        }
+
+        function loadEmployeesTable() {
+            normalizeEmployeeCompensation();
+
+            const employees = JSON.parse(localStorage.getItem('employees')).filter(emp => emp.role !== 'admin');
+
+            const tableHTML = employees.map(emp => `
+                <tr>
+                    <td class="font-semibold">${emp.id}</td>
+                    <td>${escapeHtml(emp.name)}</td>
+                    <td>${escapeHtml(emp.email)}</td>
+                    <td>${escapeHtml(emp.phone)}</td>
+                    <td>${escapeHtml(emp.department)}</td>
+                    <td>${formatPKR(BASE_SALARY_PKR)}</td>
+                    <td>
+                        <span class="badge badge-${emp.status === 'active' ? 'success' : 'danger'}">${escapeHtml(emp.status)}</span>
+                    </td>
+                    <td>
+                        <div class="flex items-center gap-2">
+                            <button onclick="openEditEmployeeModal(${emp.id})" class="text-gray-600 hover:text-gray-900" title="Edit">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4h2a2 2 0 012 2v2l-8 8H5v-2l8-8V6a2 2 0 012-2z"></path>
+                                </svg>
+                            </button>
+                            <button onclick="deleteEmployee(${emp.id})" class="text-red-600 hover:text-red-800" title="Delete">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('employeesTableBody').innerHTML = tableHTML || '<tr><td colspan="8" class="text-center text-gray-500">No employees yet</td></tr>';
+
+            const filterHTML = '<option value="">All Employees</option>' +
+                employees.map(emp => `<option value="${emp.id}">${escapeHtml(emp.name)}</option>`).join('');
+            document.getElementById('attendanceFilter').innerHTML = filterHTML;
+
+            document.getElementById('targetEmployee').innerHTML =
+                '<option value="">Select Employee</option>' +
+                employees.map(emp => `<option value="${emp.id}">${escapeHtml(emp.name)}</option>`).join('');
+        }
+
+        function parseTimeToMinutes(timeStr) {
+            if (!timeStr) return null;
+            const t = timeStr.trim();
+            const ampmMatch = t.match(/(\d{1,2}):(\d{2}):(\d{2})\s*(AM|PM)/i);
+            if (ampmMatch) {
+                let h = parseInt(ampmMatch[1], 10);
+                const m = parseInt(ampmMatch[2], 10);
+                const s = parseInt(ampmMatch[3], 10);
+                const ampm = ampmMatch[4].toUpperCase();
+                if (ampm === 'PM' && h !== 12) h += 12;
+                if (ampm === 'AM' && h === 12) h = 0;
+                return h * 60 + m + (s/60);
+            }
+            const hhMatch = t.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+            if (hhMatch) {
+                const h = parseInt(hhMatch[1], 10);
+                const m = parseInt(hhMatch[2], 10);
+                const s = parseInt(hhMatch[3] || '0', 10);
+                return h * 60 + m + (s/60);
+            }
+            return null;
+        }
+
+        function computeLateFromClockIn(clockInStr) {
+            const mins = parseTimeToMinutes(clockInStr);
+            if (mins === null) return { late: false, lateMinutes: null };
+            const lateAfter = SHIFT_START_MINUTES + LATE_GRACE_MINUTES;
+            const late = mins > lateAfter;
+            const lateMinutes = late ? Math.max(0, Math.round(mins - SHIFT_START_MINUTES)) : 0;
+            return { late, lateMinutes };
+        }
+
+        function getLateFlag(att) {
+            if (!att) return { late: false, lateMinutes: null };
+            if (typeof att.late === 'boolean') return { late: att.late, lateMinutes: att.lateMinutes ?? null };
+            if (att.status !== 'present' || !att.clockIn) return { late: false, lateMinutes: null };
+            return computeLateFromClockIn(att.clockIn);
+        }
+
+        function calculateHours(clockIn, clockOut) {
+            if (!clockIn || !clockOut) return '-';
+            const startMins = parseTimeToMinutes(clockIn);
+            const endMins = parseTimeToMinutes(clockOut);
+            if (startMins === null || endMins === null) return '-';
+            let diff = (endMins - startMins) / 60;
+            if (diff < 0) diff += 24;
+            return diff.toFixed(2) + ' hrs';
+        }
+
+        function renderPunctualityCell(att) {
+            if (att.status !== 'present') {
+                return '<span class="badge badge-danger">Absent</span>';
+            }
+            const l = getLateFlag(att);
+            if (l.late) return '<span class="badge badge-warning">Late</span>';
+            return '<span class="badge badge-success">On time</span>';
+        }
+
+        function loadAttendanceTable() {
+            const attendance = JSON.parse(localStorage.getItem('attendance'));
+            const employees = JSON.parse(localStorage.getItem('employees'));
+
+            const tableHTML = attendance.slice().sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 300).map(att => {
+                const emp = employees.find(e => e.id === att.employeeId);
+                const hoursWorked = calculateHours(att.clockIn, att.clockOut);
+
+                return `
+                    <tr>
+                        <td>${escapeHtml(emp?.name || 'Unknown')}</td>
+                        <td>${att.date}</td>
+                        <td>${att.clockIn || '-'}</td>
+                        <td>${att.clockOut || '-'}</td>
+                        <td>${hoursWorked}</td>
+                        <td>${renderPunctualityCell(att)}</td>
+                        <td>
+                            <span class="badge badge-${att.status === 'present' ? 'success' : 'danger'}">${escapeHtml(att.status)}</span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('attendanceTableBody').innerHTML = tableHTML || '<tr><td colspan="7" class="text-center text-gray-500">No attendance records</td></tr>';
+        }
+
+        function filterAttendance() {
+            const attendance = JSON.parse(localStorage.getItem('attendance'));
+            const employees = JSON.parse(localStorage.getItem('employees'));
+            const filterEmpId = parseInt(document.getElementById('attendanceFilter').value) || null;
+            const fromDate = document.getElementById('attendanceFromDate').value;
+            const toDate = document.getElementById('attendanceToDate').value;
+
+            let filtered = attendance;
+
+            if (filterEmpId) {
+                filtered = filtered.filter(att => att.employeeId === filterEmpId);
+            }
+
+            if (fromDate) {
+                filtered = filtered.filter(att => att.date >= fromDate);
+            }
+
+            if (toDate) {
+                filtered = filtered.filter(att => att.date <= toDate);
+            }
+
+            const tableHTML = filtered.slice().sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 300).map(att => {
+                const emp = employees.find(e => e.id === att.employeeId);
+                const hoursWorked = calculateHours(att.clockIn, att.clockOut);
+
+                return `
+                    <tr>
+                        <td>${escapeHtml(emp?.name || 'Unknown')}</td>
+                        <td>${att.date}</td>
+                        <td>${att.clockIn || '-'}</td>
+                        <td>${att.clockOut || '-'}</td>
+                        <td>${hoursWorked}</td>
+                        <td>${renderPunctualityCell(att)}</td>
+                        <td>
+                            <span class="badge badge-${att.status === 'present' ? 'success' : 'danger'}">${escapeHtml(att.status)}</span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('attendanceTableBody').innerHTML = tableHTML || '<tr><td colspan="7" class="text-center text-gray-500">No matching records</td></tr>';
+        }
+
+        function loadTargetsDisplay() {
+            sanitizeSalesAndTargetsToCountMode();
+
+            const targets = JSON.parse(localStorage.getItem('targets'));
+            const employees = JSON.parse(localStorage.getItem('employees'));
+            const sales = JSON.parse(localStorage.getItem('sales'));
+
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+
+            const teamTarget = targets.find(t => t.type === 'team');
+            if (teamTarget) {
+                const monthlySales = sales.filter(sale => {
+                    const saleDate = new Date(sale.date);
+                    return saleDate.getMonth() === currentMonth && saleDate.getFullYear() === currentYear;
+                });
+                const totalSalesCount = monthlySales.reduce((sum, sale) => sum + clampSalesCount(sale.amount), 0);
+                const progress = teamTarget.amount > 0 ? Math.min((totalSalesCount / teamTarget.amount) * 100, 100) : 0;
+
+                document.getElementById('teamTargetDisplay').innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-700 font-semibold">Target:</span>
+                            <span class="text-gray-900 font-extrabold">${teamTarget.amount.toLocaleString('en-PK')} sales</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-700 font-semibold">Current:</span>
+                            <span class="text-purple-600 font-extrabold">${totalSalesCount.toLocaleString('en-PK')} sales</span>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm text-gray-600">Progress</span>
+                                <span class="text-sm font-semibold text-gray-800">${progress.toFixed(1)}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${progress}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                document.getElementById('teamTargetDisplay').innerHTML = '<p class="text-gray-500 text-center">No team target set</p>';
+            }
+
+            const individualTargets = targets.filter(t => t.type === 'individual');
+            const individualHTML = individualTargets.map(target => {
+                const emp = employees.find(e => e.id === target.employeeId);
+                const empSales = sales.filter(sale => {
+                    const saleDate = new Date(sale.date);
+                    return sale.employeeId === target.employeeId &&
+                           saleDate.getMonth() === currentMonth &&
+                           saleDate.getFullYear() === currentYear;
+                });
+                const totalEmpSalesCount = empSales.reduce((sum, sale) => sum + clampSalesCount(sale.amount), 0);
+                const progress = target.amount > 0 ? Math.min((totalEmpSalesCount / target.amount) * 100, 100) : 0;
+
+                return `
+                    <div class="border-b pb-3 mb-3">
+                        <p class="font-semibold text-gray-800 mb-2">${escapeHtml(emp?.name || 'Unknown')}</p>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-600">${totalEmpSalesCount.toLocaleString('en-PK')} / ${Number(target.amount).toLocaleString('en-PK')} sales</span>
+                            <span class="font-semibold">${progress.toFixed(1)}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progress}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('individualTargetsDisplay').innerHTML = individualHTML || '<p class="text-gray-500 text-center">No individual targets set</p>';
+        }
+
+        function calculateConsecutiveAbsences(employeeId) {
+            const attendance = JSON.parse(localStorage.getItem('attendance') || '[]');
+            const map = new Map();
+            for (const a of attendance) {
+                if (a.employeeId === employeeId) {
+                    map.set(a.date, a);
+                }
+            }
+
+            let consecutive = 0;
+            const today = new Date();
+
+            for (let i = 1; i <= 90; i++) {
+                const d = addDays(today, -i);
+                const iso = toISODate(d);
+                const rec = map.get(iso);
+                if (rec && rec.status === 'present') break;
+                consecutive++;
+            }
+
+            return consecutive;
+        }
+
+        function loadPayrollTable() {
+            normalizeEmployeeCompensation();
+            sanitizeSalesAndTargetsToCountMode();
+
+            const employees = JSON.parse(localStorage.getItem('employees')).filter(emp => emp.role !== 'admin');
+            const attendance = JSON.parse(localStorage.getItem('attendance'));
+            const sales = JSON.parse(localStorage.getItem('sales'));
+
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+
+            const tableHTML = employees.map(emp => {
+                const monthAttendance = attendance.filter(att => {
+                    const attDate = new Date(att.date);
+                    return att.employeeId === emp.id &&
+                           attDate.getMonth() === currentMonth &&
+                           attDate.getFullYear() === currentYear;
+                });
+
+                const daysPresent = monthAttendance.filter(att => att.status === 'present').length;
+
+                const lateDays = monthAttendance
+                    .filter(att => att.status === 'present')
+                    .reduce((sum, att) => sum + (getLateFlag(att).late ? 1 : 0), 0);
+
+                const punctualityBonus = lateDays <= MAX_LATE_FOR_PUNCTUALITY ? PUNCTUALITY_BONUS_PKR : 0;
+
+                // Monthly sales count
+                const monthSales = sales.filter(sale => {
+                    const saleDate = new Date(sale.date);
+                    return sale.employeeId === emp.id &&
+                           saleDate.getMonth() === currentMonth &&
+                           saleDate.getFullYear() === currentYear;
+                });
+                const totalSalesCount = monthSales.reduce((sum, sale) => sum + clampSalesCount(sale.amount), 0);
+
+                // Sales bonus rule: first 5 sales are not included in admin payroll; 6th+ pays 4200 each
+                const eligibleSalesForBonus = Math.max(0, totalSalesCount - 5);
+                const salesBonus = eligibleSalesForBonus * SALE_PAYOUT_PKR;
+
+                const consecutiveAbsences = calculateConsecutiveAbsences(emp.id);
+
+                let deductions = 0;
+                let deductionReason = '';
+
+                if (consecutiveAbsences > STRICT_ABSENCE_THRESHOLD_DAYS) {
+                    deductions = BASE_SALARY_PKR * (STRICT_DEDUCTION_PERCENT / 100);
+                    deductionReason = `${STRICT_DEDUCTION_PERCENT}% deduction (>${STRICT_ABSENCE_THRESHOLD_DAYS} consecutive absences)`;
+                }
+
+                const netSalary = BASE_SALARY_PKR + punctualityBonus + salesBonus - deductions;
+
+                const punctualityBadge = punctualityBonus > 0
+                    ? '<span class="badge badge-success">Eligible</span>'
+                    : '<span class="badge badge-warning">Not eligible</span>';
+
+                return `
+                    <tr>
+                        <td class="font-semibold">${escapeHtml(emp.name)}</td>
+                        <td>${formatPKR(BASE_SALARY_PKR)}</td>
+                        <td>
+                            <div class="flex flex-col gap-1">
+                                <div class="font-semibold">${formatPKR(punctualityBonus)}</div>
+                                <div class="text-xs text-gray-500">${punctualityBadge} (≤${MAX_LATE_FOR_PUNCTUALITY} late)</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex flex-col gap-1">
+                                <div class="font-semibold text-purple-700">${totalSalesCount.toLocaleString('en-PK')} ${pluralize('sale', totalSalesCount)}</div>
+                                <div class="text-xs text-gray-500">Entries: ${monthSales.length}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="flex flex-col gap-1">
+                                <div class="font-semibold">${formatPKR(salesBonus)}</div>
+                                <div class="text-xs text-gray-500">Eligible sales: ${eligibleSalesForBonus.toLocaleString('en-PK')} (6th+)</div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge badge-${lateDays > MAX_LATE_FOR_PUNCTUALITY ? 'warning' : 'success'}">${lateDays} day(s)</span>
+                        </td>
+                        <td>${daysPresent} days</td>
+                        <td>
+                            <span class="badge badge-${consecutiveAbsences > STRICT_ABSENCE_THRESHOLD_DAYS ? 'danger' : consecutiveAbsences > 7 ? 'warning' : 'success'}">
+                                ${consecutiveAbsences} days
+                            </span>
+                        </td>
+                        <td class="text-red-600 font-semibold">
+                            ${deductions > 0 ? formatPKR(deductions) : '-'}
+                            ${deductionReason ? '<br><span class="text-xs">' + escapeHtml(deductionReason) + '</span>' : ''}
+                        </td>
+                        <td class="font-extrabold text-green-600">${formatPKR(netSalary)}</td>
+                        <td>
+                            <span class="badge badge-${consecutiveAbsences > STRICT_ABSENCE_THRESHOLD_DAYS ? 'danger' : 'success'}">
+                                ${consecutiveAbsences > STRICT_ABSENCE_THRESHOLD_DAYS ? 'Deducted' : 'Normal'}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('payrollTableBody').innerHTML = tableHTML || '<tr><td colspan="11" class="text-center text-gray-500">No employees</td></tr>';
+        }
+
+        function processPayroll() {
+            ensureAttendanceBackfill(60);
+            loadPayrollTable();
+            showToast('Payroll processed successfully based on attendance.', 'success');
+        }
+
+        function loadLeaderboard() {
+            sanitizeSalesAndTargetsToCountMode();
+
+            const employees = JSON.parse(localStorage.getItem('employees')).filter(emp => emp.role !== 'admin');
+            const sales = JSON.parse(localStorage.getItem('sales'));
+
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+
+            const leaderboard = employees
+                .filter(e => e.status !== 'inactive')
+                .map(emp => {
+                    const empSales = sales.filter(sale => {
+                        const saleDate = new Date(sale.date);
+                        return sale.employeeId === emp.id &&
+                               saleDate.getMonth() === currentMonth &&
+                               saleDate.getFullYear() === currentYear;
+                    });
+                    const totalSalesCount = empSales.reduce((sum, sale) => sum + clampSalesCount(sale.amount), 0);
+
+                    return {
+                        id: emp.id,
+                        name: emp.name,
+                        department: emp.department,
+                        sales: totalSalesCount,
+                        entries: empSales.length
+                    };
+                }).sort((a, b) => b.sales - a.sales);
+
+            const leaderboardHTML = leaderboard.map((emp, index) => {
+                const rank = index + 1;
+                const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'bg-gray-200 text-gray-700';
+
+                return `
+                    <div class="flex items-center justify-between p-4 bg-white border rounded-lg hover:shadow-md transition">
+                        <div class="flex items-center space-x-4">
+                            <div class="leaderboard-rank ${rankClass}">${rank}</div>
+                            <div>
+                                <p class="font-extrabold text-gray-800">${escapeHtml(emp.name)}</p>
+                                <p class="text-sm text-gray-500">${escapeHtml(emp.department)}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-2xl font-extrabold text-purple-600">${emp.sales.toLocaleString('en-PK')} sales</p>
+                            <p class="text-sm text-gray-500">${emp.entries} ${pluralize('entry', emp.entries)}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const adminBoard = document.getElementById('leaderboardDisplay');
+            const empBoard = document.getElementById('empLeaderboardDisplay');
+            if (adminBoard) adminBoard.innerHTML = leaderboardHTML || '<p class="text-gray-500 text-center">No sales data available</p>';
+            if (empBoard) empBoard.innerHTML = leaderboardHTML || '<p class="text-gray-500 text-center">No sales data available</p>';
+        }
+
+        // Employee Dashboard Functions
+        function loadEmployeeDashboard() {
+            document.getElementById('employeeName').textContent = currentUser.name;
+            showEmployeeView('dashboard', document.querySelector('#employeeDashboard .nav-item'));
+            checkTodayAttendance();
+            loadEmployeeStats();
+            loadEmployeeAttendance();
+            loadEmployeeTargets();
+            loadEmployeeSales();
+            loadLeaderboard();
+        }
+
+        function showEmployeeView(view, el) {
+            document.querySelectorAll('.employee-view').forEach(v => v.classList.add('hidden'));
+            document.getElementById('employee' + view.charAt(0).toUpperCase() + view.slice(1) + 'View').classList.remove('hidden');
+
+            document.querySelectorAll('#employeeDashboard .nav-item').forEach(item => item.classList.remove('active'));
+            if (el) el.classList.add('active');
+        }
+
+        function checkTodayAttendance() {
+            const attendance = JSON.parse(localStorage.getItem('attendance'));
+            const today = new Date().toISOString().split('T')[0];
+            const todayAttendance = attendance.find(att => att.employeeId === currentUser.id && att.date === today);
+
+            const clockInBtn = document.getElementById('clockInBtn');
+            const clockOutBtn = document.getElementById('clockOutBtn');
+            const statusDiv = document.getElementById('attendanceStatus');
+
+            if (todayAttendance && todayAttendance.status === 'present') {
+                if (todayAttendance.clockOut) {
+                    clockInBtn.disabled = true;
+                    clockOutBtn.disabled = true;
+                    statusDiv.innerHTML = '<p class="text-green-600 font-semibold">✓ You have completed your shift for today</p>';
+                } else {
+                    clockInBtn.disabled = true;
+                    clockOutBtn.disabled = false;
+                    statusDiv.innerHTML = '<p class="text-blue-600 font-semibold">⏱ You are currently clocked in</p>';
+                }
+            } else {
+                clockInBtn.disabled = false;
+                clockOutBtn.disabled = true;
+                statusDiv.innerHTML = '<p class="text-gray-600">Please clock in to start your shift</p>';
+            }
+        }
+
+        function clockIn() {
+            const attendance = JSON.parse(localStorage.getItem('attendance'));
+            const today = new Date().toISOString().split('T')[0];
+            const now = new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
+
+            const lateInfo = computeLateFromClockIn(now);
+
+            let todayAttendance = attendance.find(att => att.employeeId === currentUser.id && att.date === today);
+
+            if (!todayAttendance) {
+                todayAttendance = {
+                    id: attendance.length ? Math.max(...attendance.map(a => a.id || 0)) + 1 : 1,
+                    employeeId: currentUser.id,
+                    date: today,
+                    clockIn: now,
+                    clockOut: null,
+                    status: 'present',
+                    late: lateInfo.late,
+                    lateMinutes: lateInfo.lateMinutes
+                };
+                attendance.push(todayAttendance);
+            } else {
+                todayAttendance.clockIn = now;
+                todayAttendance.status = 'present';
+                todayAttendance.late = lateInfo.late;
+                todayAttendance.lateMinutes = lateInfo.lateMinutes;
+            }
+
+            localStorage.setItem('attendance', JSON.stringify(attendance));
+
+            checkTodayAttendance();
+            loadEmployeeAttendance();
+
+            showToast('Clocked in successfully at ' + now + (lateInfo.late ? ' (Late)' : ''), lateInfo.late ? 'info' : 'success');
+
+            if (!document.getElementById('adminDashboard').classList.contains('hidden')) {
+                loadAdminOverview();
+                loadAttendanceTable();
+                loadPayrollTable();
+            }
+        }
+
+        function clockOut() {
+            const attendance = JSON.parse(localStorage.getItem('attendance'));
+            const today = new Date().toISOString().split('T')[0];
+            const now = new Date().toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit', second: '2-digit'});
+
+            const todayAttendance = attendance.find(att => att.employeeId === currentUser.id && att.date === today);
+
+            if (todayAttendance) {
+                todayAttendance.clockOut = now;
+                todayAttendance.status = 'present';
+                localStorage.setItem('attendance', JSON.stringify(attendance));
+
+                checkTodayAttendance();
+                loadEmployeeAttendance();
+                showToast('Clocked out successfully at ' + now, 'success');
+
+                if (!document.getElementById('adminDashboard').classList.contains('hidden')) {
+                    loadAdminOverview();
+                    loadAttendanceTable();
+                    loadPayrollTable();
+                }
+            }
+        }
+
+        function loadEmployeeStats() {
+            sanitizeSalesAndTargetsToCountMode();
+
+            const sales = JSON.parse(localStorage.getItem('sales'));
+            const targets = JSON.parse(localStorage.getItem('targets'));
+            const employees = JSON.parse(localStorage.getItem('employees')).filter(emp => emp.role !== 'admin' && emp.status !== 'inactive');
+
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+
+            const monthlySales = sales.filter(sale => {
+                const saleDate = new Date(sale.date);
+                return sale.employeeId === currentUser.id &&
+                       saleDate.getMonth() === currentMonth &&
+                       saleDate.getFullYear() === currentYear;
+            });
+            const totalSalesCount = monthlySales.reduce((sum, sale) => sum + clampSalesCount(sale.amount), 0);
+
+            const salesSalary = totalSalesCount * SALE_PAYOUT_PKR;
+            document.getElementById('empMonthlySales').textContent = formatPKR(salesSalary);
+
+            const myTarget = targets.find(t => t.type === 'individual' && t.employeeId === currentUser.id);
+            const achievement = myTarget && myTarget.amount > 0 ? Math.round((totalSalesCount / myTarget.amount) * 100) : 0;
+            document.getElementById('empTargetAchievement').textContent = (isFinite(achievement) ? achievement : 0) + '%';
+
+            const leaderboard = employees.map(emp => {
+                const empSales = sales.filter(sale => {
+                    const saleDate = new Date(sale.date);
+                    return sale.employeeId === emp.id &&
+                           saleDate.getMonth() === currentMonth &&
+                           saleDate.getFullYear() === currentYear;
+                });
+                return {
+                    id: emp.id,
+                    sales: empSales.reduce((sum, sale) => sum + clampSalesCount(sale.amount), 0)
+                };
+            }).sort((a, b) => b.sales - a.sales);
+
+            const myRank = leaderboard.findIndex(emp => emp.id === currentUser.id) + 1;
+            document.getElementById('empRank').textContent = myRank > 0 ? '#' + myRank : '#-';
+        }
+
+        function loadEmployeeAttendance() {
+            const attendance = JSON.parse(localStorage.getItem('attendance'));
+            const myAttendance = attendance
+                .filter(att => att.employeeId === currentUser.id)
+                .sort((a,b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 30);
+
+            const tableHTML = myAttendance.map(att => {
+                const hoursWorked = calculateHours(att.clockIn, att.clockOut);
+
+                return `
+                    <tr>
+                        <td>${att.date}</td>
+                        <td>${att.clockIn || '-'}</td>
+                        <td>${att.clockOut || '-'}</td>
+                        <td>${hoursWorked}</td>
+                        <td>
+                            <span class="badge badge-${att.status === 'present' ? 'success' : 'danger'}">${escapeHtml(att.status)}</span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('empAttendanceTableBody').innerHTML = tableHTML || '<tr><td colspan="5" class="text-center text-gray-500">No attendance records</td></tr>';
+        }
+
+        function loadEmployeeTargets() {
+            sanitizeSalesAndTargetsToCountMode();
+
+            const targets = JSON.parse(localStorage.getItem('targets'));
+            const sales = JSON.parse(localStorage.getItem('sales'));
+
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+
+            const myTarget = targets.find(t => t.type === 'individual' && t.employeeId === currentUser.id);
+
+            if (myTarget) {
+                const mySales = sales.filter(sale => {
+                    const saleDate = new Date(sale.date);
+                    return sale.employeeId === currentUser.id &&
+                           saleDate.getMonth() === currentMonth &&
+                           saleDate.getFullYear() === currentYear;
+                });
+                const totalSalesCount = mySales.reduce((sum, sale) => sum + clampSalesCount(sale.amount), 0);
+                const progress = myTarget.amount > 0 ? Math.min((totalSalesCount / myTarget.amount) * 100, 100) : 0;
+
+                document.getElementById('empTargetDisplay').innerHTML = `
+                    <div class="space-y-6">
+                        <div class="text-center">
+                            <p class="text-gray-600 mb-2">Monthly Target</p>
+                            <p class="text-5xl font-extrabold text-purple-600">${Number(myTarget.amount).toLocaleString('en-PK')} sales</p>
+                        </div>
+
+                        <div class="text-center">
+                            <p class="text-gray-600 mb-2">Current Sales</p>
+                            <p class="text-4xl font-extrabold text-green-600">${totalSalesCount.toLocaleString('en-PK')} sales</p>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-700 font-semibold">Progress</span>
+                                <span class="text-gray-900 font-extrabold text-xl">${progress.toFixed(1)}%</span>
+                            </div>
+                            <div class="progress-bar" style="height: 12px;">
+                                <div class="progress-fill" style="width: ${progress}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 mt-6">
+                            <div class="bg-gray-50 p-4 rounded-lg text-center">
+                                <p class="text-gray-600 text-sm mb-1">Entries</p>
+                                <p class="text-2xl font-extrabold text-gray-800">${mySales.length}</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg text-center">
+                                <p class="text-gray-600 text-sm mb-1">Remaining</p>
+                                <p class="text-2xl font-extrabold text-orange-600">${Math.max(0, myTarget.amount - totalSalesCount).toLocaleString('en-PK')} sales</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                document.getElementById('empTargetDisplay').innerHTML = '<p class="text-gray-500 text-center">No target assigned yet</p>';
+            }
+        }
+
+        function loadEmployeeSales() {
+            sanitizeSalesAndTargetsToCountMode();
+
+            const sales = JSON.parse(localStorage.getItem('sales'));
+            const mySales = sales.filter(sale => sale.employeeId === currentUser.id).sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            const tableHTML = mySales.map(sale => {
+                const cnt = clampSalesCount(sale.amount);
+                const earnings = cnt * SALE_PAYOUT_PKR;
+                return `
+                    <tr>
+                        <td>${sale.date}</td>
+                        <td>${escapeHtml(sale.customer)}</td>
+                        <td>${escapeHtml(sale.product)}</td>
+                        <td class="font-extrabold text-purple-600">${cnt.toLocaleString('en-PK')} ${pluralize('sale', cnt)}</td>
+                        <td class="font-semibold">${formatPKR(earnings)}</td>
+                        <td><span class="badge badge-success">${escapeHtml(sale.status)}</span></td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('empSalesTableBody').innerHTML = tableHTML || '<tr><td colspan="6" class="text-center text-gray-500">No sales recorded yet</td></tr>';
+        }
+
+        // Modal Functions
+        function openAddEmployeeModal() {
+            refreshDepartmentSelects();
+            document.getElementById('addEmployeeModal').classList.add('active');
+        }
+
+        function openEditEmployeeModal(id) {
+            refreshDepartmentSelects();
+
+            const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+            const emp = employees.find(e => e.id === id);
+            if (!emp) return;
+
+            document.getElementById('editEmpId').value = emp.id;
+            document.getElementById('editEmpName').value = emp.name;
+            document.getElementById('editEmpEmail').value = emp.email;
+            document.getElementById('editEmpPhone').value = emp.phone;
+            document.getElementById('editEmpStatus').value = emp.status;
+
+            const deptSel = document.getElementById('editEmpDepartment');
+            const s = getSettings();
+            deptSel.innerHTML = '<option value="">Select Department</option>' + s.departments.map(d => `<option value="${escapeHtml(d)}">${escapeHtml(d)}</option>`).join('');
+            deptSel.value = emp.department;
+
+            document.getElementById('editEmpPassword').value = '';
+
+            document.getElementById('editEmployeeModal').classList.add('active');
+        }
+
+        function openSetTargetModal() {
+            document.getElementById('setTargetModal').classList.add('active');
+        }
+
+        function openAddSaleModal() {
+            refreshProductDatalist();
+            document.getElementById('addSaleModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function toggleEmployeeSelect() {
+            const targetType = document.getElementById('targetType').value;
+            const employeeSelectDiv = document.getElementById('employeeSelectDiv');
+
+            if (targetType === 'individual') {
+                employeeSelectDiv.classList.remove('hidden');
+            } else {
+                employeeSelectDiv.classList.add('hidden');
+            }
+        }
+
+        // Form Submissions
+        document.getElementById('addEmployeeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const employees = JSON.parse(localStorage.getItem('employees'));
+            const newEmployee = {
+                id: employees.length ? Math.max(...employees.map(e => e.id)) + 1 : 1,
+                name: document.getElementById('empName').value,
+                email: document.getElementById('empEmail').value,
+                password: document.getElementById('empPassword').value,
+                phone: document.getElementById('empPhone').value,
+                department: document.getElementById('empDepartment').value,
+                salary: BASE_SALARY_PKR,
+                status: 'active',
+                role: 'employee',
+                joinDate: new Date().toISOString().split('T')[0]
+            };
+
+            if (employees.some(e => e.email.toLowerCase() === newEmployee.email.toLowerCase())) {
+                showToast('That email is already in use.', 'danger');
+                return;
+            }
+
+            employees.push(newEmployee);
+            localStorage.setItem('employees', JSON.stringify(employees));
+
+            closeModal('addEmployeeModal');
+            this.reset();
+            refreshDepartmentSelects();
+
+            loadEmployeesTable();
+            loadAdminOverview();
+            ensureAttendanceBackfill(60);
+            loadPayrollTable();
+
+            showToast('Employee added successfully!', 'success');
+        });
+
+        document.getElementById('editEmployeeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+            const id = parseInt(document.getElementById('editEmpId').value, 10);
+            const emp = employees.find(e => e.id === id);
+            if (!emp) return;
+
+            const nextEmail = document.getElementById('editEmpEmail').value.trim();
+            const emailConflict = employees.some(e => e.id !== id && e.email.toLowerCase() === nextEmail.toLowerCase());
+            if (emailConflict) {
+                showToast('That email is already in use by another employee.', 'danger');
+                return;
+            }
+
+            emp.name = document.getElementById('editEmpName').value;
+            emp.email = nextEmail;
+            emp.phone = document.getElementById('editEmpPhone').value;
+            emp.department = document.getElementById('editEmpDepartment').value;
+            emp.status = document.getElementById('editEmpStatus').value;
+            emp.salary = BASE_SALARY_PKR;
+
+            const newPass = document.getElementById('editEmpPassword').value;
+            if (newPass && newPass.trim().length > 0) {
+                emp.password = newPass;
+            }
+
+            localStorage.setItem('employees', JSON.stringify(employees));
+
+            closeModal('editEmployeeModal');
+            loadEmployeesTable();
+            loadAdminOverview();
+            loadLeaderboard();
+            loadPayrollTable();
+
+            showToast('Employee updated.', 'success');
+        });
+
+        document.getElementById('setTargetForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const targets = JSON.parse(localStorage.getItem('targets'));
+            const targetType = document.getElementById('targetType').value;
+            const employeeId = targetType === 'individual' ? parseInt(document.getElementById('targetEmployee').value) : null;
+
+            if (targetType === 'individual' && !employeeId) {
+                showToast('Please select an employee for an individual target.', 'danger');
+                return;
+            }
+
+            const filteredTargets = targets.filter(t => {
+                if (targetType === 'team') {
+                    return t.type !== 'team';
+                } else {
+                    return !(t.type === 'individual' && t.employeeId === employeeId);
+                }
+            });
+
+            const newTarget = {
+                id: targets.length ? Math.max(...targets.map(t => t.id || 0)) + 1 : 1,
+                type: targetType,
+                employeeId: employeeId,
+                amount: clampSalesCount(document.getElementById('targetAmount').value),
+                period: document.getElementById('targetPeriod').value,
+                current: 0
+            };
+
+            filteredTargets.push(newTarget);
+            localStorage.setItem('targets', JSON.stringify(filteredTargets));
+
+            closeModal('setTargetModal');
+            this.reset();
+            loadTargetsDisplay();
+            loadAdminOverview();
+
+            showToast('Target set successfully!', 'success');
+        });
+
+        document.getElementById('addSaleForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const sales = JSON.parse(localStorage.getItem('sales'));
+            const cnt = clampSalesCount(document.getElementById('saleAmount').value);
+
+            const newSale = {
+                id: sales.length ? Math.max(...sales.map(s => s.id || 0)) + 1 : 1,
+                employeeId: currentUser.id,
+                customer: document.getElementById('saleCustomer').value,
+                product: document.getElementById('saleProduct').value,
+                amount: cnt,
+                date: document.getElementById('saleDate').value,
+                status: 'completed'
+            };
+
+            sales.push(newSale);
+            localStorage.setItem('sales', JSON.stringify(sales));
+
+            closeModal('addSaleModal');
+            this.reset();
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('saleDate').value = today;
+
+            loadEmployeeSales();
+            loadEmployeeStats();
+            loadEmployeeTargets();
+            loadLeaderboard();
+
+            if (!document.getElementById('adminDashboard').classList.contains('hidden')) {
+                loadAdminOverview();
+                loadTargetsDisplay();
+            }
+
+            showToast('Sale recorded successfully!', 'success');
+        });
+
+        function deleteEmployee(id) {
+            if (!confirm('Are you sure you want to delete this employee? This will also delete their sales, targets, and attendance records.')) return;
+
+            const employees = JSON.parse(localStorage.getItem('employees'));
+            const filtered = employees.filter(emp => emp.id !== id);
+            localStorage.setItem('employees', JSON.stringify(filtered));
+
+            const attendance = JSON.parse(localStorage.getItem('attendance') || '[]').filter(a => a.employeeId !== id);
+            localStorage.setItem('attendance', JSON.stringify(attendance));
+
+            const sales = JSON.parse(localStorage.getItem('sales') || '[]').filter(s => s.employeeId !== id);
+            localStorage.setItem('sales', JSON.stringify(sales));
+
+            const targets = JSON.parse(localStorage.getItem('targets') || '[]').filter(t => !(t.type === 'individual' && t.employeeId === id));
+            localStorage.setItem('targets', JSON.stringify(targets));
+
+            loadEmployeesTable();
+            loadAdminOverview();
+            loadAttendanceTable();
+            loadTargetsDisplay();
+            loadPayrollTable();
+            loadLeaderboard();
+
+            showToast('Employee deleted successfully!', 'success');
+        }
+
+        // Backup / Restore
+        function exportData() {
+            const payload = {
+                exportedAt: new Date().toISOString(),
+                employees: JSON.parse(localStorage.getItem('employees') || '[]'),
+                attendance: JSON.parse(localStorage.getItem('attendance') || '[]'),
+                targets: JSON.parse(localStorage.getItem('targets') || '[]'),
+                sales: JSON.parse(localStorage.getItem('sales') || '[]'),
+                settings: getSettings()
+            };
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `sales-hub-backup-${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            showToast('Backup downloaded.', 'success');
+        }
+
+        function importFromFile(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                const text = reader.result;
+                importData(text);
+            };
+            reader.readAsText(file);
+        }
+
+        function importFromTextarea() {
+            const text = document.getElementById('importJson').value;
+            importData(text);
+        }
+
+        function clearImportTextarea() {
+            document.getElementById('importJson').value = '';
+            showToast('Cleared.', 'info');
+        }
+
+        function importData(rawText) {
+            try {
+                if (!rawText || !rawText.trim()) {
+                    showToast('No JSON provided.', 'danger');
+                    return;
+                }
+                const parsed = JSON.parse(rawText);
+
+                if (!parsed.employees || !parsed.attendance || !parsed.targets || !parsed.sales) {
+                    if (!Array.isArray(parsed.employees) && !Array.isArray(parsed)) {
+                        showToast('Invalid backup format.', 'danger');
+                        return;
+                    }
+                }
+
+                if (parsed.employees) localStorage.setItem('employees', JSON.stringify(parsed.employees));
+                if (parsed.attendance) localStorage.setItem('attendance', JSON.stringify(parsed.attendance));
+                if (parsed.targets) localStorage.setItem('targets', JSON.stringify(parsed.targets));
+                if (parsed.sales) localStorage.setItem('sales', JSON.stringify(parsed.sales));
+                if (parsed.settings) localStorage.setItem('settings', JSON.stringify({...DEFAULT_SETTINGS, ...parsed.settings}));
+
+                applyBrandTheme();
+                sanitizeSalesAndTargetsToCountMode();
+                normalizeEmployeeCompensation();
+                ensureAttendanceBackfill(60);
+
+                if (currentUser?.role === 'admin') {
+                    loadAdminDashboard();
+                } else if (currentUser?.role === 'employee') {
+                    loadEmployeeDashboard();
+                } else {
+                    refreshDepartmentSelects();
+                    refreshProductDatalist();
+                    renderSettingsUI();
+                }
+
+                showToast('Import complete!', 'success');
+            } catch (e) {
+                showToast('Import failed: invalid JSON.', 'danger');
+            }
+        }
+
+        function resetAllData() {
+            if (!confirm('Reset all data? This cannot be undone.')) return;
+            localStorage.clear();
+            initApp();
+            logout();
+            showToast('System reset complete (demo data restored).', 'success');
+        }
+
+        // Close modals on outside click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // Initialize app on load
+        initApp();
+    </script>
+</body>
+</html>
