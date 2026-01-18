@@ -171,6 +171,47 @@
 
     <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
+    <!-- First-time Setup Screen -->
+    <div id="setupScreen" class="hidden min-h-screen flex items-center justify-center gradient-bg">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 md:p-12 w-full max-w-md slide-in">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-extrabold text-gray-800 mb-2">📞 Sales Hub</h1>
+                <p class="text-gray-600">First-time setup (Create Admin Account)</p>
+            </div>
+
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded mb-6">
+                <p class="text-sm text-blue-900 font-semibold">This appears only on the first setup.</p>
+                <p class="text-sm text-blue-900/80 mt-1">Data is stored in this browser (localStorage). For multi-computer shared data, use the Launch Guide in Settings later.</p>
+            </div>
+
+            <form id="setupForm" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Admin Full Name</label>
+                    <input type="text" id="setupName" required placeholder="Enter admin name">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Admin Email</label>
+                    <input type="email" id="setupEmail" required placeholder="admin@yourcompany.com">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Admin Password</label>
+                    <input type="password" id="setupPassword" required placeholder="Create a strong password">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
+                    <input type="password" id="setupPassword2" required placeholder="Re-enter password">
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full">Create Admin & Continue</button>
+
+                <p class="text-center text-xs text-gray-500">Tip: After setup, go to Admin → Settings to customize theme, departments, and products.</p>
+            </form>
+        </div>
+    </div>
+
     <!-- Login Screen -->
     <div id="loginScreen" class="min-h-screen flex items-center justify-center gradient-bg">
         <div class="bg-white rounded-2xl shadow-2xl p-8 md:p-12 w-full max-w-md slide-in">
@@ -1324,13 +1365,14 @@ settings: {brand1, brand2, departments[], products[]}</pre>
                 '===========================',
                 '',
                 'Before you share this with your team:',
-                '1) Change demo passwords (Admin + Employees)',
-                '2) Set Brand Theme (Settings → Brand Theme)',
-                '3) Add Departments (Settings → Departments)',
-                '4) Add Products/Services (Settings → Products/Services)',
-                '5) Set Targets (Admin → Targets)',
-                '6) Decide shift timing (late rule) and confirm it matches your office',
-                '7) Export a JSON Backup (Settings → Download Backup)',
+                '1) Run first-time setup (create Admin account)',
+                '2) Add Employees (Admin → Employees → Add Employee)',
+                '3) Set Brand Theme (Settings → Brand Theme)',
+                '4) Add Departments (Settings → Departments)',
+                '5) Add Products/Services (Settings → Products/Services)',
+                '6) Set Targets (Admin → Targets)',
+                '7) Decide shift timing (late rule) and confirm it matches your office',
+                '8) Export a JSON Backup (Settings → Download Backup)',
                 '',
                 'Hosting options:',
                 '- Quick launch (static hosting): Netlify / Vercel / GitHub Pages',
@@ -1410,89 +1452,26 @@ settings: {brand1, brand2, departments[], products[]}</pre>
 
             applyBrandTheme();
 
-            // Initialize demo data if not exists
+            // Professional mode: DO NOT auto-create demo accounts.
+            // If no employees exist yet, show first-time setup.
             if (!localStorage.getItem('employees')) {
-                const demoEmployees = [
-                    {
-                        id: 1,
-                        name: 'Admin User',
-                        email: 'admin@sales.com',
-                        password: 'admin123',
-                        phone: '555-0001',
-                        department: 'Management',
-                        salary: 0,
-                        status: 'active',
-                        role: 'admin',
-                        joinDate: '2024-01-01'
-                    },
-                    {
-                        id: 2,
-                        name: 'John Doe',
-                        email: 'john@sales.com',
-                        password: 'emp123',
-                        phone: '555-0002',
-                        department: 'Sales',
-                        salary: BASE_SALARY_PKR,
-                        status: 'active',
-                        role: 'employee',
-                        joinDate: '2024-01-15'
-                    },
-                    {
-                        id: 3,
-                        name: 'Sarah Smith',
-                        email: 'sarah@sales.com',
-                        password: 'emp123',
-                        phone: '555-0003',
-                        department: 'Sales',
-                        salary: BASE_SALARY_PKR,
-                        status: 'active',
-                        role: 'employee',
-                        joinDate: '2024-02-01'
-                    },
-                    {
-                        id: 4,
-                        name: 'Mike Johnson',
-                        email: 'mike@sales.com',
-                        password: 'emp123',
-                        phone: '555-0004',
-                        department: 'Sales',
-                        salary: BASE_SALARY_PKR,
-                        status: 'active',
-                        role: 'employee',
-                        joinDate: '2024-02-15'
-                    }
-                ];
-                localStorage.setItem('employees', JSON.stringify(demoEmployees));
+                localStorage.setItem('employees', JSON.stringify([]));
             }
-
-            normalizeEmployeeCompensation();
 
             if (!localStorage.getItem('attendance')) {
                 localStorage.setItem('attendance', JSON.stringify([]));
             }
 
             if (!localStorage.getItem('targets')) {
-                const demoTargets = [
-                    {id: 1, type: 'team', employeeId: null, amount: 80, period: 'monthly', current: 0},
-                    {id: 2, type: 'individual', employeeId: 2, amount: 30, period: 'monthly', current: 0},
-                    {id: 3, type: 'individual', employeeId: 3, amount: 35, period: 'monthly', current: 0},
-                    {id: 4, type: 'individual', employeeId: 4, amount: 25, period: 'monthly', current: 0}
-                ];
-                localStorage.setItem('targets', JSON.stringify(demoTargets));
+                localStorage.setItem('targets', JSON.stringify([]));
             }
 
             if (!localStorage.getItem('sales')) {
-                const demoSales = [
-                    {id: 1, employeeId: 2, customer: 'ABC Corp', product: 'Product A', amount: 3, date: '2024-12-01', status: 'completed'},
-                    {id: 2, employeeId: 3, customer: 'XYZ Inc', product: 'Product B', amount: 5, date: '2024-12-02', status: 'completed'},
-                    {id: 3, employeeId: 2, customer: 'Tech Solutions', product: 'Product C', amount: 2, date: '2024-12-03', status: 'completed'},
-                    {id: 4, employeeId: 4, customer: 'Global Industries', product: 'Product A', amount: 4, date: '2024-12-04', status: 'completed'},
-                    {id: 5, employeeId: 3, customer: 'Smart Systems', product: 'Product D', amount: 6, date: '2024-12-05', status: 'completed'}
-                ];
-                localStorage.setItem('sales', JSON.stringify(demoSales));
+                localStorage.setItem('sales', JSON.stringify([]));
             }
 
             sanitizeSalesAndTargetsToCountMode();
+            normalizeEmployeeCompensation();
 
             refreshDepartmentSelects();
             refreshProductDatalist();
@@ -1504,6 +1483,17 @@ settings: {brand1, brand2, departments[], products[]}</pre>
             const today = new Date().toISOString().split('T')[0];
             const saleDate = document.getElementById('saleDate');
             if (saleDate) saleDate.value = today;
+
+            // Show setup screen if no admin exists
+            const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+            const hasAdmin = employees.some(e => e.role === 'admin');
+            if (!hasAdmin) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('setupScreen').classList.remove('hidden');
+            } else {
+                document.getElementById('setupScreen').classList.add('hidden');
+                document.getElementById('loginScreen').classList.remove('hidden');
+            }
 
             if (!localStorage.getItem('seenHelp')) {
                 localStorage.setItem('seenHelp', '1');
@@ -1585,6 +1575,69 @@ settings: {brand1, brand2, departments[], products[]}</pre>
             showToast(added > 0 ? `Backfill complete: ${added} absent day(s) added.` : 'Backfill complete: nothing to add.', 'success');
         }
 
+        // First-time Setup
+        const setupForm = document.getElementById('setupForm');
+        if (setupForm) {
+            setupForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const name = (document.getElementById('setupName').value || '').trim();
+                const email = (document.getElementById('setupEmail').value || '').trim();
+                const pass1 = document.getElementById('setupPassword').value || '';
+                const pass2 = document.getElementById('setupPassword2').value || '';
+
+                if (!name || !email || !pass1) {
+                    showToast('Please fill all fields.', 'danger');
+                    return;
+                }
+
+                if (pass1.length < 6) {
+                    showToast('Password must be at least 6 characters.', 'danger');
+                    return;
+                }
+
+                if (pass1 !== pass2) {
+                    showToast('Passwords do not match.', 'danger');
+                    return;
+                }
+
+                const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+                if (employees.some(e => e.email.toLowerCase() === email.toLowerCase())) {
+                    showToast('This email is already in use.', 'danger');
+                    return;
+                }
+
+                const newAdmin = {
+                    id: employees.length ? Math.max(...employees.map(e => e.id || 0)) + 1 : 1,
+                    name,
+                    email,
+                    password: pass1,
+                    phone: '',
+                    department: 'Management',
+                    salary: 0,
+                    status: 'active',
+                    role: 'admin',
+                    joinDate: new Date().toISOString().split('T')[0]
+                };
+
+                employees.push(newAdmin);
+                localStorage.setItem('employees', JSON.stringify(employees));
+
+                // Ensure system tables exist
+                localStorage.setItem('attendance', localStorage.getItem('attendance') || '[]');
+                localStorage.setItem('targets', localStorage.getItem('targets') || '[]');
+                localStorage.setItem('sales', localStorage.getItem('sales') || '[]');
+
+                document.getElementById('setupScreen').classList.add('hidden');
+                document.getElementById('loginScreen').classList.remove('hidden');
+
+                document.getElementById('loginEmail').value = email;
+                document.getElementById('loginPassword').value = '';
+
+                showToast('Admin account created. Please sign in.', 'success');
+            });
+        }
+
         // Login
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -1618,10 +1671,21 @@ settings: {brand1, brand2, departments[], products[]}</pre>
         // Logout
         function logout() {
             currentUser = null;
-            document.getElementById('loginScreen').classList.remove('hidden');
             document.getElementById('adminDashboard').classList.add('hidden');
             document.getElementById('employeeDashboard').classList.add('hidden');
             document.getElementById('loginForm').reset();
+
+            // If no admin exists, return to setup screen
+            const employees = JSON.parse(localStorage.getItem('employees') || '[]');
+            const hasAdmin = employees.some(e => e.role === 'admin');
+            if (!hasAdmin) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('setupScreen').classList.remove('hidden');
+            } else {
+                document.getElementById('setupScreen').classList.add('hidden');
+                document.getElementById('loginScreen').classList.remove('hidden');
+            }
+
             showToast('Logged out.', 'info');
         }
 
@@ -2763,8 +2827,11 @@ settings: {brand1, brand2, departments[], products[]}</pre>
             if (!confirm('Reset all data? This cannot be undone.')) return;
             localStorage.clear();
             initApp();
-            logout();
-            showToast('System reset complete (demo data restored).', 'success');
+            currentUser = null;
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('employeeDashboard').classList.add('hidden');
+            document.getElementById('loginForm').reset();
+            showToast('System reset complete. Please run setup again.', 'success');
         }
 
         // Close modals on outside click
